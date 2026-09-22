@@ -8,3 +8,6 @@
 
   ## 경력
   * 2026.09 ~ 2027.03: AI campus 시스템반도체 설계 과정 2기
+
+  ## 학습 기록
+  * 2026-09-22: Git 실습 — clone, add, commit, push, pull
