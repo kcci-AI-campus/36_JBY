@@ -1,0 +1,64 @@
+보드에서 성능 측정하는 순서  (2026-09-22)
+==========================================
+
+MobaXterm 으로 보드에 옮길 파일 — 5개
+   detect_baby.py     실제 동작 (아기-위험물 접근 경보)
+   bench_models.py    모델 3종 속도 자동 비교
+   trace_util.py      단계별 시간·타임라인 기록 (detect_baby.py --trace 에 필요)
+   best.tflite / best_int8.tflite / best_w8a32.tflite    Colab result.zip 에서 나온 것
+   (alarm.wav 가 있으면 같이. 없으면 소리 없이 동작한다)
+
+넣을 곳 : /home/willtek/work/baby/
+
+
+0) 준비
+   source ~/work/env/bin/activate
+   cd ~/work/baby
+   pip install psutil          # 코어별 CPU 사용률을 보려면 필요. 한 번만
+   ls -l *.tflite
+
+
+1) 모델 3종 속도 자동 비교          ← 손으로 FPS 적을 필요 없다
+   python3 bench_models.py
+
+   폴더의 tflite 전부를 각 200프레임씩 돌려서 표로 출력하고
+   bench_result.csv 로 저장한다.
+   나오는 값 : 크기(MB) / 카메라·전처리·추론·후처리 각 ms / 한프레임 ms /
+               FPS(계산) / FPS(실측) / CPU% / 온도 / 검출개수
+
+   변형
+     python3 bench_models.py --frames 300      프레임 수 늘리기
+     python3 bench_models.py --threads 1       스레드 1개와 4개 비교
+     python3 bench_models.py --no-camera       카메라 빼고 추론만
+     python3 bench_models.py best_int8.tflite  한 모델만
+
+
+2) 단계별 시간 + Perfetto 타임라인
+   python3 detect_baby.py best.tflite       --trace
+   python3 detect_baby.py best_int8.tflite  --trace
+   python3 detect_baby.py best_w8a32.tflite --trace
+
+   각각 30초 정도 돌리고 q 로 종료. 종료할 때
+     - 단계별 평균 시간 표 (frame / camera / preproc / normalize / inference /
+       postproc / judge / led / draw / imshow / waitKey)
+     - 측정 요약 (평균 FPS, 경보 횟수, CPU 평균, 온도)
+     - trace_baby.json
+   이 나온다. json 은 이름을 바꿔 두어야 다음 실행에 덮어쓰이지 않는다.
+       mv trace_baby.json trace_int8.json
+
+   PC 로 가져와 https://ui.perfetto.dev 에 끌어다 놓으면
+   프레임 하나하나의 막대와 코어별 CPU 그래프, 경보(ALARM) 표시가 보인다.
+
+
+3) 보고서에 넣을 것
+   ① bench_result.csv 표  -> 정확도(Colab) + 크기 + 속도(여기) 3축 표
+   ② 단계별 시간 표 3장   -> 양자화가 줄인 시간이 inference 구간에서만
+                             줄었는지 확인. 다른 구간이 병목이면 경량화 효과 없음
+   ③ Perfetto 화면 캡처   -> 전체 30초 / 한 프레임 확대 2장
+   ④ CPU·온도            -> "저전력" 주장의 근거
+
+
+참고
+   화면 없이 순수 속도만 볼 때는  python3 detect_baby.py --no-gui --trace
+   waitKey 구간이 크게 나오면 추론이 느린 게 아니라 화면 표시가 발목을 잡는 것이다
+   (가위바위보 때 WAIT_MS 10 -> 1 로 바꿔 한 프레임 60.5 -> 23.2 ms 로 줄인 그 항목)

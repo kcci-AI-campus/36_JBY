@@ -1,0 +1,520 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>7세그먼트 예습노트</title>
+<style>
+:root{--navy:#0d1b3e;--ink:#1c2434;--muted:#1f2737;--paper:#f6f7fb;--card:#fff;--line:#e3e7f0;--blue:#1769d6;--blue-soft:#eaf2fe;--amber-soft:#fdf3df;--gray-soft:#f1f3f8;--green-soft:#e6f5ec;--red-soft:#fde8e7;--kbd:#fff;--kbd-line:#c5ccd9;}
+@media (prefers-color-scheme:dark){:root{--navy:#c9d6f5;--ink:#e7eaf1;--muted:#c9d1e2;--paper:#12141a;--card:#1b1e26;--line:#2c313c;--blue-soft:#16243a;--amber-soft:#332a12;--gray-soft:#20242e;--green-soft:#15291d;--red-soft:#3a1d1b;--kbd:#262a34;--kbd-line:#3d4452;}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Apple SD Gothic Neo','Pretendard','Malgun Gothic',-apple-system,sans-serif;background:var(--paper);color:var(--ink);margin:0;line-height:1.62;font-size:15px;word-break:keep-all;overflow-wrap:break-word}
+.wrap{max-width:940px;margin:0 auto 0 290px;padding:28px 20px 80px}
+h1{color:var(--navy);font-size:23px;margin:0 0 4px}
+.sub{color:var(--muted);font-size:13.5px;margin-bottom:16px}
+h2{font-size:18px;color:var(--navy);margin:34px 0 8px;border-bottom:2px solid var(--line);padding-bottom:5px}
+h3{font-size:15.5px;color:var(--navy);margin:22px 0 6px}
+h2,h3{scroll-margin-top:16px}
+.pg{font-size:12px;font-weight:600;color:var(--blue);background:var(--blue-soft);border-radius:5px;padding:1px 6px;margin-left:6px;vertical-align:2px}
+.side{position:fixed;top:0;left:0;bottom:0;width:290px;overflow-y:auto;background:var(--card);border-right:1px solid var(--line);padding:16px 12px 40px;font-size:13px;line-height:1.45;z-index:10}
+.side-h{font-weight:800;color:var(--navy);font-size:15px;margin:0 4px 10px;display:flex;justify-content:space-between;align-items:center}
+.side-h button{display:none;font:inherit;font-size:12px;border:1px solid var(--line);background:var(--gray-soft);color:var(--ink);border-radius:6px;padding:2px 8px;cursor:pointer}
+.side ul{list-style:none;margin:0;padding:0}
+.side li.sec>a{display:block;font-weight:800;color:var(--navy);padding:6px 8px;border-radius:6px;margin-top:6px}
+.side li.q>a{display:block;color:var(--muted);padding:3px 8px 3px 18px;border-radius:6px;opacity:.85}
+.side a{text-decoration:none}
+.side a:hover{background:var(--gray-soft)}
+.side a.on{background:var(--blue-soft);color:var(--blue);opacity:1}
+@media (max-width:1000px){.side{position:static;width:auto;border-right:0;border-bottom:1px solid var(--line)}.side-h button{display:inline-block}.side.closed ul{display:none}.wrap{margin-left:auto}}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;margin:8px 0;font-size:13.8px;background:var(--card)}
+th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+th{background:var(--gray-soft);white-space:nowrap}
+td.c,th.c{text-align:center}
+b{color:var(--navy)}
+kbd{display:inline-block;font-family:inherit;font-size:12.5px;font-weight:700;background:var(--kbd);border:1px solid var(--kbd-line);border-bottom-width:2px;border-radius:5px;padding:0 6px;white-space:nowrap}
+code{background:var(--gray-soft);padding:1px 6px;border-radius:5px;font-size:.9em;word-break:break-all}
+pre{background:var(--gray-soft);padding:10px 12px;border-radius:8px;overflow-x:auto;font-size:12.8px;line-height:1.5;margin:6px 0}
+pre code{background:none;padding:0;word-break:normal}
+.memo{background:var(--amber-soft);border-radius:8px;padding:8px 12px;margin:8px 0;font-size:13.5px}
+.ok{background:var(--green-soft);border-radius:8px;padding:8px 12px;margin:8px 0;font-size:13.5px}
+.bad{background:var(--red-soft);border-radius:8px;padding:8px 12px;margin:8px 0;font-size:13.5px}
+.ana{background:var(--blue-soft);border-radius:8px;padding:8px 12px;margin:8px 0;font-size:13.5px}
+.ana::before{content:"비유  ";font-weight:800;color:var(--blue)}
+.steps{padding-left:22px;margin:6px 0}
+.steps li{margin:3px 0}
+.flow{background:var(--blue-soft);border-radius:8px;padding:10px 14px;margin:8px 0;font-size:14px}
+@media print{.side{display:none}.wrap{margin-left:0}@page{size:A4;margin:12mm}:root{color-scheme:light!important}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}body{font-size:12.5px}table,pre{break-inside:avoid}h2,h3{break-after:avoid}}
+</style>
+
+<nav class="side" id="side">
+<div class="side-h">📘 목차 <button type="button" id="sideToggle" aria-expanded="true">접기</button></div>
+<ul id="sideList"></ul>
+</nav>
+
+<div class="wrap">
+<h1>📘 Verilog 7세그먼트 예습노트</h1>
+<div class="sub">3일차(2026-10-02) 수업 전 예습 · 기초 → 한 자리 → 네 자리(스캔) → 2일차 덧셈기 결과 표시 · 코드는 모두 이 노트북 Vivado 2022.2 에서 시뮬레이션과 비트스트림 생성까지 확인(보드 실물은 아직) · 수업 코드와 이름이 다를 수 있음</div>
+<h2 id="s0">0. 한눈에 보기</h2>
+<p>7세그먼트는 숫자 하나를 막대 LED 7개로 그리는 표시기다. 할 일은 두 가지: <b>어느 막대를 켤지</b>(디코더)와 <b>어느 자리를 켤지</b>(자리 선택).</p>
+<div class="flow">값 4비트 → <b>디코더</b> → 획 7비트 <code>seg[6:0]</code> → 보드 7세그먼트 ← 자리 선택 4비트 <code>an[3:0]</code></div>
+<div class="tw"><table><tr><th>실습</th><th>하는 것</th><th>새로 배우는 것</th><th>파일</th></tr><tr><td>1. 한 자리</td><td>스위치 4개 값을 오른쪽 자리에 0~F 로</td><td><code>always @(*)</code>, <code>case</code>, 0 = 켜짐</td><td><code>seg7_decoder.v</code>, <code>fnd_top.v</code></td></tr><tr><td>2. 네 자리</td><td>스위치 16개 = 4자리 16진수</td><td>클럭, 카운터, 스캔(번갈아 켜기)</td><td><code>fnd_scan.v</code>, <code>fnd_sw_top.v</code></td></tr><tr><td>3. 덧셈기</td><td>2일차 덧셈 결과를 10진수 세 자리로</td><td><code>/</code> 몫, <code>%</code> 나머지</td><td><code>adder_fnd_top.v</code> + 2일차 <code>adder.v</code></td></tr></table></div>
+<div class="ok">확인한 것 (2026-10-02, 이 노트북 Vivado 2022.2): 세 실습 모두 시뮬레이션 결과가 기대값과 같고, 합성 → 구현 → 비트스트림까지 Critical warning 0개로 통과. 보드에 직접 올려 보지는 않았다.</div>
+<div class="memo">한국 수업·현업에서는 7세그먼트를 <b>FND</b> 라고도 부른다. 수업 코드의 모듈·포트 이름은 이 노트와 다를 수 있다 — 원리만 같으면 된다.</div>
+<h2 id="s1">1. 기초 — 7세그먼트가 뭔가</h2>
+<h3 id="s1-1">1.1 획 이름</h3>
+<pre><code> ---a---
+|       |
+f       b
+|       |
+ ---g---
+|       |
+e       c
+|       |
+ ---d---  . dp</code></pre>
+<ul class="steps"><li>한 자리 = 막대 LED 7개(<b>a~g</b>) + 점 1개(<b>dp</b>, decimal point = 소수점).</li><li>위에서 시계 방향으로 a(위) → b(오른쪽 위) → c(오른쪽 아래) → d(아래) → e(왼쪽 아래) → f(왼쪽 위), 가운데가 g.</li><li>7개를 켜고 끄는 조합은 2^7 = 128가지. 그중 숫자·글자처럼 보이는 것만 골라 쓴다.</li></ul>
+<h3 id="s1-2">1.2 LED 는 언제 켜지나 — 애노드와 캐소드</h3>
+<ul class="steps"><li><b>LED</b>(발광 다이오드) = 전류가 한쪽 방향으로만 흐르고, 흐르면 빛나는 부품.</li><li><b>애노드</b>(anode) = + 쪽 다리, <b>캐소드</b>(cathode) = − 쪽 다리. 애노드 쪽 전압이 높고 캐소드 쪽이 낮을 때 켜진다.</li><li><b>공통 애노드</b>(common anode) = 한 자리 LED 8개의 애노드를 한 점에 묶은 구조. 캐소드를 묶으면 공통 캐소드. <b>Basys3 는 공통 애노드.</b></li></ul>
+<h3 id="s1-3">1.3 Basys3 연결 — LED 32개를 핀 12개로</h3>
+<div class="tw"><table><tr><th>선</th><th>개수</th><th>하는 일</th><th>FPGA 핀</th></tr><tr><td><code>CA~CG</code>, <code>DP</code></td><td>8</td><td>획 선택. <b>4자리가 같은 획끼리 한 선을 같이 씀</b></td><td>W7 W6 U8 V8 U5 V5 U7 / V7</td></tr><tr><td><code>AN0~AN3</code></td><td>4</td><td>자리 선택. <code>AN0</code> = 오른쪽 끝, <code>AN3</code> = 왼쪽 끝</td><td>U2 U4 V4 W4</td></tr></table></div>
+<ul class="steps"><li>LED 는 4자리 × 8 = 32개인데 핀은 12개뿐이다. 예: "a 획" 선 하나가 네 자리의 a 획에 전부 이어져 있다.</li><li>그래서 <b>한순간에는 켠 자리들에 모두 같은 모양</b>이 뜬다. <code>an</code> 으로 두 자리를 켜면 두 자리에 같은 숫자가 나온다.</li></ul>
+<h3 id="s1-4">1.4 0 일 때 켜진다 (active low)</h3>
+<ul class="steps"><li><b>active low</b> = 0 이 "켜기" 신호. Basys3 7세그먼트는 <code>AN0~AN3</code> 과 <code>CA~CG</code>, <code>DP</code> <b>모두 0 일 때 켜짐</b>.</li><li>획 쪽(캐소드)은 0 V 가 되어야 전류가 흐르니 0 이 켜짐. 자리 쪽(애노드)은 트랜지스터를 거치며 신호가 뒤집혀서 역시 0 이 켜짐.</li><li>예: 오른쪽 자리에 1 → <code>an = 4'b1110</code>(AN0 만 0), b · c 획만 켬 → <code>seg = 7'b1111001</code>(왼쪽부터 g f e d c b a, b · c 자리만 0).</li></ul>
+<div class="memo">2일차 보드 사진에서 쓰지도 않은 7세그먼트가 "8.8.8.8." 로 켜져 있었다. 안 쓰는 핀의 기본값이 풀다운(0 쪽으로 약하게 당김)이라 AN · 획이 모두 0 → 전부 켜진 것으로 본다(추정).</div>
+<h3 id="s1-5">1.5 네 자리에 다른 숫자 — 스캔</h3>
+<ul class="steps"><li>한 자리씩 돌아가며 켜고, 네 자리 한 바퀴를 <b>1~16 ms 안에</b> 계속 반복하면 눈에는 네 자리가 동시에 켜진 것처럼 보인다. 이것이 <b>스캔</b>(scan) 또는 <b>멀티플렉싱</b>(multiplexing, 선 하나를 시간으로 나눠 쓰기).</li><li>한 자리는 전체 시간의 1/4 만 켜진다. 한 바퀴가 느려져 약 45 Hz 쯤이 되면 깜빡임이 보인다.</li><li>설명서 예: 16 ms 한 바퀴(62.5 Hz)면 한 자리당 4 ms.</li></ul>
+<div class="ana">반 4개가 교내 방송 스피커 선 하나를 같이 쓰는 학교. 한 번에 한 반 스피커만 켜고 아주 빠르게 반을 돌아가며 말하면, 모든 반이 동시에 듣는 것처럼 들린다.</div>
+<p>출처: Digilent <b>Basys 3 Reference Manual</b> 8.1 Seven-Segment Display (2017-03-23 개정판).</p>
+<h2 id="s2">2. 숫자 모양 만들기 — 디코더</h2>
+<p><b>디코더</b>(decoder) = 한 가지 코드를 다른 코드로 바꾸는 조합 회로. 여기서는 4비트 값(0~15) → 7비트 획 모양.</p>
+<h3 id="s2-1">2.1 0~F 모양</h3>
+<pre><code> _       _   _       _   _   _   _   _   _       _       _   _
+| |   |  _|  _| |_| |_  |_    | |_| |_| |_| |_  |    _| |_  |_
+|_|   | |_   _|   |  _| |_|   | |_|  _| | | |_| |_  |_| |_  |
+ 0   1   2   3   4   5   6   7   8   9   A   b   C   d   E   F</code></pre>
+<ul class="steps"><li><b>b · d 는 소문자</b>: 대문자 B · D 를 7획으로 그리면 8 · 0 과 똑같아진다. A · C · E · F 는 대문자.</li><li>2일차 판서의 <b>BCD</b> = 10진수 한 자리(0~9)를 4비트로 적는 방식. 10~15 까지 A~F 로 보여 주는 건 <b>16진수 디코더</b>.</li></ul>
+<h3 id="s2-2">2.2 코드 표</h3>
+<p><code>seg</code> 7비트는 <b>왼쪽부터 g f e d c b a</b> 순서로 적는다 — XDC 에서 <code>seg[0]</code> = a(CA) … <code>seg[6]</code> = g(CG) 이기 때문. <b>0 = 켜짐.</b></p>
+<div class="tw"><table><tr><th>값</th><th>보이는 글자</th><th>켜는 획</th><th>seg (g f e d c b a)</th></tr><tr><td>0</td><td>0</td><td>a b c d e f</td><td><code>7'b1000000</code></td></tr><tr><td>1</td><td>1</td><td>b c</td><td><code>7'b1111001</code></td></tr><tr><td>2</td><td>2</td><td>a b d e g</td><td><code>7'b0100100</code></td></tr><tr><td>3</td><td>3</td><td>a b c d g</td><td><code>7'b0110000</code></td></tr><tr><td>4</td><td>4</td><td>b c f g</td><td><code>7'b0011001</code></td></tr><tr><td>5</td><td>5</td><td>a c d f g</td><td><code>7'b0010010</code></td></tr><tr><td>6</td><td>6</td><td>a c d e f g</td><td><code>7'b0000010</code></td></tr><tr><td>7</td><td>7</td><td>a b c</td><td><code>7'b1111000</code></td></tr><tr><td>8</td><td>8</td><td>a b c d e f g</td><td><code>7'b0000000</code></td></tr><tr><td>9</td><td>9</td><td>a b c d f g</td><td><code>7'b0010000</code></td></tr><tr><td>10</td><td>A</td><td>a b c e f g</td><td><code>7'b0001000</code></td></tr><tr><td>11</td><td>b</td><td>c d e f g</td><td><code>7'b0000011</code></td></tr><tr><td>12</td><td>C</td><td>a d e f</td><td><code>7'b1000110</code></td></tr><tr><td>13</td><td>d</td><td>b c d e g</td><td><code>7'b0100001</code></td></tr><tr><td>14</td><td>E</td><td>a d e f g</td><td><code>7'b0000110</code></td></tr><tr><td>15</td><td>F</td><td>a e f g</td><td><code>7'b0001110</code></td></tr></table></div>
+<div class="bad">자주 하는 실수: 비트 순서를 a 부터(왼쪽이 a) 적으면 모양이 전부 틀어진다. 1 = 켜짐으로 생각하고 짜면 켜야 할 획은 꺼지고 나머지가 켜진다.</div>
+<h2 id="s3">3. 실습 1 — 한 자리 (조합 회로)</h2>
+<p>스위치 SW3~SW0 으로 0~15 를 만들고, 오른쪽 끝 자리에 0~F 로 보인다. 클럭이 필요 없는 <b>조합 회로</b>(입력이 바뀌면 출력이 바로 바뀌는 회로).</p>
+<h3 id="s3-1">3.1 새 문법 세 가지</h3>
+<div class="tw"><table><tr><th>문법</th><th>뜻</th></tr><tr><td><code>always @(*) begin … end</code></td><td>입력이 하나라도 바뀌면 안의 내용을 다시 계산. <code>assign</code> 여러 줄을 한 덩어리로 쓰는 것과 같은 조합 회로</td></tr><tr><td><code>case (값) … endcase</code></td><td>값마다 결과를 한 줄씩 적는 표. <code>default:</code> 는 표에 없는 값일 때</td></tr><tr><td><code>output reg [6:0] seg</code></td><td><code>always</code> 안에서 <code>=</code> 로 값을 넣는 출력은 <code>reg</code> 로 선언. 이름만 reg 이고 저장 소자(플립플롭)가 생기지는 않는다</td></tr></table></div>
+<h3 id="s3-2">3.2 디코더 — seg7_decoder.v</h3>
+<pre><code>`timescale 1ns / 1ps
+// 4비트 값(0~15) → 7세그먼트 한 자리 모양
+module seg7_decoder (
+    input      [3:0] hex,   // 표시할 값 0~15
+    output reg [6:0] seg    // {g,f,e,d,c,b,a}, 0 = 켜짐
+);
+    always @(*) begin
+        case (hex)
+            4'h0: seg = 7'b1000000;
+            4'h1: seg = 7'b1111001;
+            4'h2: seg = 7'b0100100;
+            4'h3: seg = 7'b0110000;
+            4'h4: seg = 7'b0011001;
+            4'h5: seg = 7'b0010010;
+            4'h6: seg = 7'b0000010;
+            4'h7: seg = 7'b1111000;
+            4'h8: seg = 7'b0000000;
+            4'h9: seg = 7'b0010000;
+            4'hA: seg = 7'b0001000;  // A
+            4'hB: seg = 7'b0000011;  // b
+            4'hC: seg = 7'b1000110;  // C
+            4'hD: seg = 7'b0100001;  // d
+            4'hE: seg = 7'b0000110;  // E
+            4'hF: seg = 7'b0001110;  // F
+            default: seg = 7'b1111111;  // 전부 끔
+        endcase
+    end
+endmodule</code></pre>
+<h3 id="s3-3">3.3 보드용 Top — fnd_top.v</h3>
+<pre><code>`timescale 1ns / 1ps
+// 실습 1: 스위치 4개 값을 오른쪽 한 자리에 16진수로 표시
+module fnd_top (
+    input  [3:0] sw,     // SW3~SW0
+    output [6:0] seg,    // 획 a~g
+    output       dp,     // 점
+    output [3:0] an      // 자리 선택 AN3~AN0
+);
+    assign an = 4'b1110;   // AN0(오른쪽 끝 자리)만 켬 — 0 = 켜짐
+    assign dp = 1'b1;      // 점은 끔
+
+    seg7_decoder U_DEC (
+        .hex(sw),
+        .seg(seg)
+    );
+endmodule</code></pre>
+<ul class="steps"><li><code>an = 4'b1110</code> → AN0(오른쪽 끝)만 켬. <code>4'b0000</code> 이면 네 자리 모두 같은 숫자, <code>4'b0111</code> 이면 왼쪽 끝 자리.</li><li><code>dp = 1'b1</code> → 점은 끔 (0 이면 켜짐).</li></ul>
+<h3 id="s3-4">3.4 테스트벤치 — tb_fnd_top.v</h3>
+<pre><code>`timescale 1ns / 1ps
+module tb_fnd_top ();
+    reg  [3:0] sw;
+    wire [6:0] seg;
+    wire       dp;
+    wire [3:0] an;
+    integer i;
+
+    fnd_top DUT (
+        .sw (sw),
+        .seg(seg),
+        .dp (dp),
+        .an (an)
+    );
+
+    initial begin
+        for (i = 0; i &lt; 16; i = i + 1) begin
+            sw = i;
+            #10;
+        end
+        $finish;
+    end
+
+    always @(sw) $strobe("sw=%h  seg=%b  an=%b  dp=%b", sw, seg, an, dp);
+endmodule</code></pre>
+<p><code>$strobe</code> = 그 시각의 값이 모두 정해진 뒤에 출력하는 <code>$display</code>. 시뮬레이션 결과 (2026-10-02 실측):</p>
+<pre><code>sw=0  seg=1000000  an=1110  dp=1
+sw=1  seg=1111001  an=1110  dp=1
+sw=2  seg=0100100  an=1110  dp=1
+sw=3  seg=0110000  an=1110  dp=1
+sw=4  seg=0011001  an=1110  dp=1
+sw=5  seg=0010010  an=1110  dp=1
+sw=6  seg=0000010  an=1110  dp=1
+sw=7  seg=1111000  an=1110  dp=1
+sw=8  seg=0000000  an=1110  dp=1
+sw=9  seg=0010000  an=1110  dp=1
+sw=a  seg=0001000  an=1110  dp=1
+sw=b  seg=0000011  an=1110  dp=1
+sw=c  seg=1000110  an=1110  dp=1
+sw=d  seg=0100001  an=1110  dp=1
+sw=e  seg=0000110  an=1110  dp=1
+sw=f  seg=0001110  an=1110  dp=1</code></pre>
+<ul class="steps"><li>파형에서는 숫자 그림이 아니라 7비트 값이 보인다 → <code>seg</code> 의 Radix 를 <b>Binary</b> 로 바꿔 2.2 표와 비교.</li></ul>
+<h3 id="s3-5">3.5 XDC — fnd_top.xdc</h3>
+<p>마스터 XDC 에서 아래 줄들의 <code>#</code> 를 지우고, 포트 이름을 모듈과 똑같이 맞춘다. 스위치는 마스터 이름 <code>sw[0]~sw[3]</code> 그대로.</p>
+<pre><code>## Switches
+set_property -dict { PACKAGE_PIN V17  IOSTANDARD LVCMOS33 } [get_ports {sw[0]}]
+set_property -dict { PACKAGE_PIN V16  IOSTANDARD LVCMOS33 } [get_ports {sw[1]}]
+set_property -dict { PACKAGE_PIN W16  IOSTANDARD LVCMOS33 } [get_ports {sw[2]}]
+set_property -dict { PACKAGE_PIN W17  IOSTANDARD LVCMOS33 } [get_ports {sw[3]}]
+## 7 Segment Display
+set_property -dict { PACKAGE_PIN W7   IOSTANDARD LVCMOS33 } [get_ports {seg[0]}]
+set_property -dict { PACKAGE_PIN W6   IOSTANDARD LVCMOS33 } [get_ports {seg[1]}]
+set_property -dict { PACKAGE_PIN U8   IOSTANDARD LVCMOS33 } [get_ports {seg[2]}]
+set_property -dict { PACKAGE_PIN V8   IOSTANDARD LVCMOS33 } [get_ports {seg[3]}]
+set_property -dict { PACKAGE_PIN U5   IOSTANDARD LVCMOS33 } [get_ports {seg[4]}]
+set_property -dict { PACKAGE_PIN V5   IOSTANDARD LVCMOS33 } [get_ports {seg[5]}]
+set_property -dict { PACKAGE_PIN U7   IOSTANDARD LVCMOS33 } [get_ports {seg[6]}]
+set_property -dict { PACKAGE_PIN V7   IOSTANDARD LVCMOS33 } [get_ports dp]
+set_property -dict { PACKAGE_PIN U2   IOSTANDARD LVCMOS33 } [get_ports {an[0]}]
+set_property -dict { PACKAGE_PIN U4   IOSTANDARD LVCMOS33 } [get_ports {an[1]}]
+set_property -dict { PACKAGE_PIN V4   IOSTANDARD LVCMOS33 } [get_ports {an[2]}]
+set_property -dict { PACKAGE_PIN W4   IOSTANDARD LVCMOS33 } [get_ports {an[3]}]</code></pre>
+<h3 id="s3-6">3.6 보드에서 확인할 것</h3>
+<div class="tw"><table><tr><th>SW3~SW0</th><th>값</th><th>오른쪽 자리</th></tr><tr><td>0000</td><td>0</td><td>0</td></tr><tr><td>0101</td><td>5</td><td>5</td></tr><tr><td>1001</td><td>9</td><td>9</td></tr><tr><td>1010</td><td>10</td><td>A</td></tr><tr><td>1011</td><td>11</td><td>b</td></tr><tr><td>1111</td><td>15</td><td>F</td></tr></table></div>
+<ul class="steps"><li>나머지 세 자리와 점은 꺼져 있어야 한다.</li><li>구현 결과 (2026-10-02): LUT 4, FF 0, Critical warning 0, 비트스트림 생성 OK. 클럭이 없어서 타이밍(WNS)은 NA.</li></ul>
+<h2 id="s4">4. 실습 2 — 네 자리 (스캔, 순차 회로)</h2>
+<p>자리를 일정 시간마다 바꾸려면 시간을 세야 한다 → <b>클럭</b>과 <b>카운터</b>가 필요한 <b>순차 회로</b>(지난 값을 기억하는 회로).</p>
+<h3 id="s4-1">4.1 새 개념</h3>
+<div class="tw"><table><tr><th>개념</th><th>뜻</th></tr><tr><td>클럭 (clock)</td><td>일정한 박자로 0 · 1 을 반복하는 신호. Basys3 는 <b>100 MHz</b> = 10 ns 마다 한 번 (핀 W5)</td></tr><tr><td><code>always @(posedge clk)</code></td><td>클럭이 0 → 1 로 올라가는 순간(posedge)마다 실행 → 값을 기억하는 플립플롭이 생긴다</td></tr><tr><td><code>&lt;=</code> (논블로킹 대입)</td><td>클럭 블록 안에서 쓰는 대입. 블록 안의 대입이 같은 순간에 한꺼번에 바뀐다. 조합 회로 <code>always @(*)</code> 에서는 <code>=</code></td></tr><tr><td>카운터 (counter)</td><td>클럭마다 1씩 커지는 레지스터. <code>cnt &lt;= cnt + 1;</code></td></tr><tr><td>리셋 (reset)</td><td>카운터를 0 으로 되돌리는 입력. 이 노트에서는 BTNU(T18) = <code>rst</code>, 누르는 동안 카운터가 0 에 멈춤</td></tr></table></div>
+<h3 id="s4-2">4.2 스캔 속도 계산</h3>
+<p>18비트 카운터의 위 2비트 <code>cnt[17:16]</code> 을 자리 번호(0~3)로 쓴다. 아래 16비트가 한 바퀴 도는 동안(2^16 클럭) 같은 자리를 켠다.</p>
+<div class="tw"><table><tr><th>자리 번호로 쓰는 비트</th><th>한 자리 켜는 시간</th><th>네 자리 한 바퀴</th><th>판단</th></tr><tr><td><code>cnt[15:14]</code></td><td>2^14 × 10 ns = 0.16 ms</td><td>0.66 ms (약 1.5 kHz)</td><td>설명서 권장(1~16 ms)보다 빠름</td></tr><tr><td><code>cnt[17:16]</code> (이 노트)</td><td>2^16 × 10 ns = 0.655 ms</td><td><b>2.62 ms (약 381 Hz)</b></td><td>권장 범위 안</td></tr><tr><td><code>cnt[19:18]</code></td><td>2^18 × 10 ns = 2.62 ms</td><td>10.5 ms (약 95 Hz)</td><td>권장 범위 안</td></tr><tr><td><code>cnt[21:20]</code></td><td>2^20 × 10 ns = 10.5 ms</td><td>41.9 ms (약 24 Hz)</td><td>깜빡임 보임 (45 Hz 아래)</td></tr></table></div>
+<h3 id="s4-3">4.3 스캔 모듈 — fnd_scan.v</h3>
+<pre><code>`timescale 1ns / 1ps
+// 실습 2: 4자리를 한 자리씩 빠르게 돌아가며 켜는 스캔 회로
+module fnd_scan (
+    input             clk,     // 100 MHz
+    input             rst,     // 1 이면 카운터를 0 으로
+    input      [15:0] value,   // 4자리 16진수: [15:12] 왼쪽 … [3:0] 오른쪽
+    input      [3:0]  blank,   // 1 = 그 자리 끄기 (bit3 = 왼쪽 자리)
+    output     [6:0]  seg,
+    output            dp,
+    output reg [3:0]  an
+);
+    reg  [17:0] cnt;               // 10 ns × 2^18 = 2.62 ms 마다 한 바퀴
+    wire [1:0]  sel = cnt[17:16];  // 지금 켤 자리 번호 0~3 (0.655 ms 마다 바뀜)
+    reg  [3:0]  digit;             // 지금 자리에 보낼 값
+
+    always @(posedge clk) begin
+        if (rst) cnt &lt;= 0;
+        else     cnt &lt;= cnt + 1;
+    end
+
+    always @(*) begin
+        case (sel)
+            2'd0:    begin an = 4'b1110; digit = value[3:0];   end
+            2'd1:    begin an = 4'b1101; digit = value[7:4];   end
+            2'd2:    begin an = 4'b1011; digit = value[11:8];  end
+            default: begin an = 4'b0111; digit = value[15:12]; end
+        endcase
+        if (blank[sel]) an = 4'b1111;   // 끄라고 한 자리면 아무 자리도 안 켬
+    end
+
+    assign dp = 1'b1;   // 점은 끔
+
+    seg7_decoder U_DEC (
+        .hex(digit),
+        .seg(seg)
+    );
+endmodule</code></pre>
+<ul class="steps"><li><code>sel</code> = 지금 켤 자리 번호. 0.655 ms 마다 0 → 1 → 2 → 3 → 0 …</li><li><code>case (sel)</code> = 자리 번호마다 <code>an</code> 과 그 자리 값 <code>digit</code> 을 고른다. 예: sel = 1 → <code>an = 4'b1101</code>(AN1 만 켬), <code>digit = value[7:4]</code>.</li><li><code>blank</code> = 끌 자리 표시. 1 인 자리 차례에는 <code>an = 4'b1111</code> 로 아무 자리도 안 켠다 (실습 3 에서 왼쪽 자리 끄기).</li><li><code>seg7_decoder</code> 는 실습 1 것을 그대로 재사용 — 2일차의 인스턴스(만든 모듈을 부품처럼 꺼내 쓰기)와 같은 방식.</li></ul>
+<h3 id="s4-4">4.4 보드용 Top — fnd_sw_top.v</h3>
+<pre><code>`timescale 1ns / 1ps
+// 실습 2 보드용: 스위치 16개 = 4자리 16진수 (스위치 4개가 한 자리)
+module fnd_sw_top (
+    input         clk,
+    input         rst,     // BTNU
+    input  [15:0] sw,
+    output [6:0]  seg,
+    output        dp,
+    output [3:0]  an
+);
+    fnd_scan U_FND (
+        .clk  (clk),
+        .rst  (rst),
+        .value(sw),
+        .blank(4'b0000),
+        .seg  (seg),
+        .dp   (dp),
+        .an   (an)
+    );
+endmodule</code></pre>
+<p>스위치 4개가 한 자리: SW15~12 = 왼쪽 자리 … SW3~0 = 오른쪽 자리.</p>
+<h3 id="s4-5">4.5 테스트벤치 — tb_fnd_sw_top.v</h3>
+<pre><code>`timescale 1ns / 1ps
+module tb_fnd_sw_top ();
+    reg         clk = 0;
+    reg         rst = 1;
+    reg  [15:0] sw  = 16'h12AF;   // 왼쪽부터 1 2 A F
+    wire [6:0]  seg;
+    wire        dp;
+    wire [3:0]  an;
+
+    fnd_sw_top DUT (
+        .clk(clk),
+        .rst(rst),
+        .sw (sw),
+        .seg(seg),
+        .dp (dp),
+        .an (an)
+    );
+
+    always #5 clk = ~clk;          // 10 ns 주기 = 100 MHz
+
+    initial begin
+        #20 rst = 0;               // 리셋 풀기
+        #3_000_000;                // 3 ms (4자리 한 바퀴 2.62 ms 보다 길게)
+        $finish;
+    end
+
+    always @(an) $strobe("%0d ns  an=%b  seg=%b", $time, an, seg);
+endmodule</code></pre>
+<ul class="steps"><li><code>reg clk = 0;</code> 처럼 선언하면서 시작값을 줄 수 있다. <code>always #5 clk = ~clk;</code> = 5 ns 마다 뒤집기 → 10 ns 주기.</li><li><code>#3_000_000</code> = 3,000,000 ns = 3 ms. 숫자 사이 <code>_</code> 는 읽기 쉽게 끊는 표시(값에는 영향 없음).</li></ul>
+<p>결과 (2026-10-02 실측):</p>
+<pre><code>0 ns  an=0111  seg=1111001
+5 ns  an=1110  seg=0001110
+655375 ns  an=1101  seg=0001000
+1310735 ns  an=1011  seg=0100100
+1966095 ns  an=0111  seg=1111001
+2621455 ns  an=1110  seg=0001110</code></pre>
+<ul class="steps"><li>0 ns 줄은 리셋 전이라 <code>cnt</code> 가 아직 X(모름)인 순간의 값 — 무시.</li><li>5 ns: 첫 클럭에 리셋으로 <code>cnt = 0</code> → AN0(오른쪽)에 F(<code>0001110</code>).</li><li>655,375 ns(0.655 ms 뒤): AN1 에 A → 1,310,735 ns: AN2 에 2 → 1,966,095 ns: AN3 에 1 → 2,621,455 ns: 다시 AN0 에 F. 한 바퀴 2.62 ms, 계산과 같다.</li><li>눈으로 보면 왼쪽부터 <b>1 2 A F</b>.</li></ul>
+<h3 id="s4-6">4.6 XDC — fnd_sw_top.xdc</h3>
+<pre><code>## Clock signal (100 MHz)
+set_property -dict { PACKAGE_PIN W5   IOSTANDARD LVCMOS33 } [get_ports clk]
+create_clock -add -name sys_clk_pin -period 10.00 -waveform {0 5} [get_ports clk]
+## BTNU = rst
+set_property -dict { PACKAGE_PIN T18  IOSTANDARD LVCMOS33 } [get_ports rst]
+## Switches
+set_property -dict { PACKAGE_PIN V17  IOSTANDARD LVCMOS33 } [get_ports {sw[0]}]
+set_property -dict { PACKAGE_PIN V16  IOSTANDARD LVCMOS33 } [get_ports {sw[1]}]
+set_property -dict { PACKAGE_PIN W16  IOSTANDARD LVCMOS33 } [get_ports {sw[2]}]
+set_property -dict { PACKAGE_PIN W17  IOSTANDARD LVCMOS33 } [get_ports {sw[3]}]
+set_property -dict { PACKAGE_PIN W15  IOSTANDARD LVCMOS33 } [get_ports {sw[4]}]
+set_property -dict { PACKAGE_PIN V15  IOSTANDARD LVCMOS33 } [get_ports {sw[5]}]
+set_property -dict { PACKAGE_PIN W14  IOSTANDARD LVCMOS33 } [get_ports {sw[6]}]
+set_property -dict { PACKAGE_PIN W13  IOSTANDARD LVCMOS33 } [get_ports {sw[7]}]
+set_property -dict { PACKAGE_PIN V2   IOSTANDARD LVCMOS33 } [get_ports {sw[8]}]
+set_property -dict { PACKAGE_PIN T3   IOSTANDARD LVCMOS33 } [get_ports {sw[9]}]
+set_property -dict { PACKAGE_PIN T2   IOSTANDARD LVCMOS33 } [get_ports {sw[10]}]
+set_property -dict { PACKAGE_PIN R3   IOSTANDARD LVCMOS33 } [get_ports {sw[11]}]
+set_property -dict { PACKAGE_PIN W2   IOSTANDARD LVCMOS33 } [get_ports {sw[12]}]
+set_property -dict { PACKAGE_PIN U1   IOSTANDARD LVCMOS33 } [get_ports {sw[13]}]
+set_property -dict { PACKAGE_PIN T1   IOSTANDARD LVCMOS33 } [get_ports {sw[14]}]
+set_property -dict { PACKAGE_PIN R2   IOSTANDARD LVCMOS33 } [get_ports {sw[15]}]
+## 7 Segment Display
+set_property -dict { PACKAGE_PIN W7   IOSTANDARD LVCMOS33 } [get_ports {seg[0]}]
+set_property -dict { PACKAGE_PIN W6   IOSTANDARD LVCMOS33 } [get_ports {seg[1]}]
+set_property -dict { PACKAGE_PIN U8   IOSTANDARD LVCMOS33 } [get_ports {seg[2]}]
+set_property -dict { PACKAGE_PIN V8   IOSTANDARD LVCMOS33 } [get_ports {seg[3]}]
+set_property -dict { PACKAGE_PIN U5   IOSTANDARD LVCMOS33 } [get_ports {seg[4]}]
+set_property -dict { PACKAGE_PIN V5   IOSTANDARD LVCMOS33 } [get_ports {seg[5]}]
+set_property -dict { PACKAGE_PIN U7   IOSTANDARD LVCMOS33 } [get_ports {seg[6]}]
+set_property -dict { PACKAGE_PIN V7   IOSTANDARD LVCMOS33 } [get_ports dp]
+set_property -dict { PACKAGE_PIN U2   IOSTANDARD LVCMOS33 } [get_ports {an[0]}]
+set_property -dict { PACKAGE_PIN U4   IOSTANDARD LVCMOS33 } [get_ports {an[1]}]
+set_property -dict { PACKAGE_PIN V4   IOSTANDARD LVCMOS33 } [get_ports {an[2]}]
+set_property -dict { PACKAGE_PIN W4   IOSTANDARD LVCMOS33 } [get_ports {an[3]}]</code></pre>
+<ul class="steps"><li><code>create_clock</code> 줄 = Vivado 에게 "이 핀은 10 ns 주기 클럭"이라고 알려 주는 줄 → 타이밍 분석(WNS)이 가능해진다. HW1 에서 WNS 가 NA 였던 이유가 이 줄이 없어서다.</li><li>마스터 XDC 의 버튼 줄은 <code>btnU</code> 이름 → 이 노트에서는 포트 이름을 <code>rst</code> 로 바꿔 씀.</li></ul>
+<h3 id="s4-7">4.7 보드에서 확인할 것</h3>
+<ul class="steps"><li>SW15~12 = 0001, SW11~8 = 0010, SW7~4 = 1010, SW3~0 = 1111 → <b>1 2 A F</b>.</li><li>BTNU 를 누르고 있는 동안: 카운터가 0 에 멈춰 오른쪽 자리(F)만 켜진다 → 스캔이 멈춘 모습을 직접 볼 수 있다.</li><li>구현 결과 (2026-10-02): LUT 11, FF 18(18비트 카운터), WNS 7.408 ns(0 이상 = 100 MHz 타이밍 통과), Critical warning 0, 비트스트림 OK.</li></ul>
+<h2 id="s5">5. 실습 3 — 2일차 덧셈기를 네 자리로</h2>
+<h3 id="s5-1">5.1 가능한가? — 가능하다</h3>
+<ul class="steps"><li>덧셈 결과 = s(합, 8비트 0~255) + c(올림수 1비트, 0~1). 숫자로는 256 × c + s.</li><li><b>교수님 블록도</b>(2일차 11쪽, FA4_1 의 cin 을 GND '0' 에 연결): 최대 255 + 255 = <b>510</b>. <b>cin 을 BTNC 로 받는 내 설계</b>: 최대 255 + 255 + 1 = <b>511</b>. 어느 쪽이든 10진수 <b>세 자리</b>면 충분 → 네 자리 중 세 자리를 쓰고 왼쪽 자리는 끈다.</li><li>16진수로 보이고 싶으면 0x000 ~ 0x1FF 도 세 자리: <code>value = {4'd0, 3'b000, c, s[7:4], s[3:0]}</code>.</li><li>a · b · 합을 한꺼번에 보이기는 자리가 모자란다(3 + 3 + 3 = 9자리). 버튼으로 보이는 것을 바꾸는 모드 전환은 다음 단계 아이디어.</li></ul>
+<div class="memo">HW1 교수님 피드백 (2026-10-02): "결과값 0~511 은 틀린 것 같다, c 는 올림수". 교수님 블록도(cin = GND '0')대로면 최대 510 이고, 511 은 cin 을 버튼으로 추가한 설계에서만 나온다 → 범위를 적을 때는 조건을 나눠 적는다. (지적한 이유가 이것인지는 추측)</div>
+<h3 id="s5-2">5.2 10진수 세 자리 나누기 — / 와 %</h3>
+<div class="tw"><table><tr><th>식</th><th>뜻</th><th>511 일 때</th></tr><tr><td><code>sum / 100</code></td><td>100 으로 나눈 몫 = 백의 자리</td><td>5</td></tr><tr><td><code>(sum / 10) % 10</code></td><td>10 으로 나눈 몫을 다시 10 으로 나눈 나머지 = 십의 자리</td><td>1</td></tr><tr><td><code>sum % 10</code></td><td>10 으로 나눈 나머지 = 일의 자리</td><td>1</td></tr></table></div>
+<p>상수로 나누는 <code>/</code> · <code>%</code> 는 Vivado 가 조합 회로로 바꿔 준다 — 아래 설계 전체가 LUT 60개로 합성됨 (2026-10-02 확인).</p>
+<h3 id="s5-3">5.3 Top — adder_fnd_top.v</h3>
+<pre><code>`timescale 1ns / 1ps
+// 실습 3: 2일차 8비트 덧셈기 결과(0~511)를 10진수 세 자리로 표시
+module adder_fnd_top (
+    input        clk,
+    input        rst,      // BTNU
+    input  [7:0] a,        // SW7~SW0
+    input  [7:0] b,        // SW15~SW8
+    input        cin,      // BTNC
+    output [7:0] s,        // LD7~LD0 (2일차와 같음)
+    output       c,        // LD8
+    output [6:0] seg,
+    output       dp,
+    output [3:0] an
+);
+    wire [8:0] sum  = {c, s};           // 9비트 합 0~511
+    wire [3:0] hund = sum / 100;        // 백의 자리
+    wire [3:0] tens = (sum / 10) % 10;  // 십의 자리
+    wire [3:0] ones = sum % 10;         // 일의 자리
+
+    adder U_ADD (
+        .a  (a),
+        .b  (b),
+        .cin(cin),
+        .s  (s),
+        .c  (c)
+    );
+
+    fnd_scan U_FND (
+        .clk  (clk),
+        .rst  (rst),
+        .value({4'd0, hund, tens, ones}),
+        .blank(4'b1000),               // 왼쪽 자리는 끔
+        .seg  (seg),
+        .dp   (dp),
+        .an   (an)
+    );
+endmodule</code></pre>
+<ul class="steps"><li><code>adder</code> 는 2일차 <code>adder.v</code> 를 고치지 않고 그대로 인스턴스로 꺼내 쓴다.</li><li><code>wire [8:0] sum = {c, s};</code> = c 를 맨 위 비트로 붙인 9비트. <code>{ , }</code> 는 비트 이어 붙이기(연결 연산자).</li><li><code>value = {4'd0, hund, tens, ones}</code> + <code>blank = 4'b1000</code> → 왼쪽 자리는 끄고 오른쪽 세 자리에 백 · 십 · 일.</li><li>LED(s, c) 출력은 2일차 그대로 둔다 → LED 2진수와 7세그먼트 10진수를 나란히 비교할 수 있다.</li></ul>
+<h3 id="s5-4">5.4 테스트벤치 — tb_adder_fnd.v (자동 판정)</h3>
+<pre><code>`timescale 1ns / 1ps
+module tb_adder_fnd ();
+    reg        clk = 0;
+    reg        rst = 1;
+    reg  [7:0] a, b;
+    reg        cin;
+    wire [7:0] s;
+    wire       c;
+    wire [6:0] seg;
+    wire       dp;
+    wire [3:0] an;
+    integer i, j, k, err;
+
+    adder_fnd_top DUT (
+        .clk(clk), .rst(rst), .a(a), .b(b), .cin(cin),
+        .s(s), .c(c), .seg(seg), .dp(dp), .an(an)
+    );
+
+    always #5 clk = ~clk;
+
+    initial begin
+        // ① 131,072가지 전부: 세 자리 숫자가 a + b + cin 과 같은지 자동 비교
+        err = 0;
+        for (k = 0; k &lt; 2; k = k + 1) begin
+            for (i = 0; i &lt; 256; i = i + 1) begin
+                for (j = 0; j &lt; 256; j = j + 1) begin
+                    cin = k; a = i; b = j;
+                    #1;
+                    if (DUT.hund * 100 + DUT.tens * 10 + DUT.ones !== i + j + k)
+                        err = err + 1;
+                end
+            end
+        end
+        $display("decimal mismatch = %0d", err);
+        // ② 255 + 255 + 1 = 511 을 보드처럼 스캔
+        a = 255; b = 255; cin = 1;
+        #20 rst = 0;
+        #3_000_000;
+        $finish;
+    end
+
+    always @(an) $strobe("%0d ns  an=%b  seg=%b", $time, an, seg);
+endmodule</code></pre>
+<ul class="steps"><li>①: 131,072가지를 다 넣고 <code>백 × 100 + 십 × 10 + 일</code> 이 <code>a + b + cin</code> 과 같은지 TB 가 스스로 비교 — 파형을 눈으로 안 봐도 된다 (HW1 AI 검증 2번 제안).</li><li><code>DUT.hund</code> 처럼 <code>인스턴스이름.신호이름</code> 으로 모듈 안쪽 신호를 TB 에서 직접 볼 수 있다.</li><li><code>!==</code> = X · Z 까지 구별하는 "다르다". 값이 X 로 나와도 불일치로 잡힌다.</li></ul>
+<p>결과 (2026-10-02 실측):</p>
+<pre><code>0 ns  an=0111  seg=1000000
+5 ns  an=1110  seg=0010010
+decimal mismatch = 0
+786445 ns  an=1101  seg=1111001
+1441805 ns  an=1011  seg=0010010
+2097165 ns  an=1111  seg=1000000
+2752525 ns  an=1110  seg=1111001</code></pre>
+<ul class="steps"><li><code>decimal mismatch = 0</code> → 131,072가지 전부 세 자리 숫자가 정확.</li><li>0 ns · 5 ns 줄: 자동 판정을 하는 동안(리셋 중이라 오른쪽 자리만) 찍힌 값 — 무시.</li><li>786,445 ns 부터가 255 + 255 + 1 = 511 의 스캔: AN1 = 1(십) → AN2 = 5(백) → <code>an = 1111</code>(왼쪽 자리 차례지만 끔) → AN0 = 1(일). 눈으로 보면 왼쪽 자리가 꺼진 <b>511</b>.</li></ul>
+<h3 id="s5-5">5.5 XDC — adder_fnd_top.xdc</h3>
+<p>2일차 XDC(a · b · cin · s · c 줄)는 그대로 두고 아래 줄을 더한다.</p>
+<pre><code>## Clock signal (100 MHz)
+set_property -dict { PACKAGE_PIN W5   IOSTANDARD LVCMOS33 } [get_ports clk]
+create_clock -add -name sys_clk_pin -period 10.00 -waveform {0 5} [get_ports clk]
+## BTNU = rst
+set_property -dict { PACKAGE_PIN T18  IOSTANDARD LVCMOS33 } [get_ports rst]
+## 7 Segment Display
+set_property -dict { PACKAGE_PIN W7   IOSTANDARD LVCMOS33 } [get_ports {seg[0]}]
+set_property -dict { PACKAGE_PIN W6   IOSTANDARD LVCMOS33 } [get_ports {seg[1]}]
+set_property -dict { PACKAGE_PIN U8   IOSTANDARD LVCMOS33 } [get_ports {seg[2]}]
+set_property -dict { PACKAGE_PIN V8   IOSTANDARD LVCMOS33 } [get_ports {seg[3]}]
+set_property -dict { PACKAGE_PIN U5   IOSTANDARD LVCMOS33 } [get_ports {seg[4]}]
+set_property -dict { PACKAGE_PIN V5   IOSTANDARD LVCMOS33 } [get_ports {seg[5]}]
+set_property -dict { PACKAGE_PIN U7   IOSTANDARD LVCMOS33 } [get_ports {seg[6]}]
+set_property -dict { PACKAGE_PIN V7   IOSTANDARD LVCMOS33 } [get_ports dp]
+set_property -dict { PACKAGE_PIN U2   IOSTANDARD LVCMOS33 } [get_ports {an[0]}]
+set_property -dict { PACKAGE_PIN U4   IOSTANDARD LVCMOS33 } [get_ports {an[1]}]
+set_property -dict { PACKAGE_PIN V4   IOSTANDARD LVCMOS33 } [get_ports {an[2]}]
+set_property -dict { PACKAGE_PIN W4   IOSTANDARD LVCMOS33 } [get_ports {an[3]}]</code></pre>
+<h3 id="s5-6">5.6 Vivado 프로젝트에 넣는 순서</h3>
+<ol class="steps"><li>2일차 프로젝트를 열고 Add Sources 로 <code>seg7_decoder.v</code>, <code>fnd_scan.v</code>, <code>adder_fnd_top.v</code> 추가 (<code>adder.v</code> 는 그대로).</li><li>XDC 에 5.5 의 줄을 더한다 (또는 마스터의 해당 줄 <code>#</code> 를 지우고 이름 맞추기).</li><li>Sources 창에서 <code>adder_fnd_top</code> 오른쪽 클릭 → <b>Set as Top</b> (HW1 트러블슈팅: Top 이 그대로면 핀 경고가 쏟아진다).</li><li>Run Synthesis → Run Implementation → Generate Bitstream → Program Device.</li></ol>
+<h3 id="s5-7">5.7 보드에서 확인할 것</h3>
+<div class="tw"><table><tr><th>입력</th><th>합</th><th>7세그먼트 (오른쪽 세 자리)</th><th>LED</th></tr><tr><td>0 + 0</td><td>0</td><td>000</td><td>모두 꺼짐</td></tr><tr><td>1 + 15</td><td>16</td><td>016</td><td>LD4</td></tr><tr><td>128 + 128</td><td>256</td><td>256</td><td>LD8</td></tr><tr><td>255 + 255</td><td>510</td><td>510</td><td>LD8 ~ LD1</td></tr><tr><td>255 + 255 + BTNC</td><td>511</td><td>511</td><td>LD8 ~ LD0</td></tr></table></div>
+<ul class="steps"><li>앞자리 0 도 그대로 보인다(016). 앞자리 0 끄기(leading zero blanking)는 <code>blank</code> 를 값에 따라 바꾸는 도전 과제.</li><li>구현 결과 (2026-10-02): LUT 60, FF 18, WNS 7.408 ns, Critical warning 0, 비트스트림 OK.</li></ul>
+<h2 id="s6">6. 자주 하는 실수</h2>
+<div class="tw"><table><tr><th>증상</th><th>원인</th><th>해결</th></tr><tr><td>다 켜지거나 엉뚱한 획이 켜짐</td><td>1 = 켜짐으로 생각하고 코드를 짬</td><td>0 = 켜짐. 2.2 표 그대로</td></tr><tr><td>모양이 전부 틀어짐</td><td><code>seg</code> 비트 순서 반대(왼쪽을 a 로)</td><td><code>seg[0]</code> = a … <code>seg[6]</code> = g → 7비트는 g f e d c b a</td></tr><tr><td>생각한 자리 반대편에 나옴</td><td>자리 번호 착각</td><td><code>AN0</code> = 오른쪽 끝, <code>AN3</code> = 왼쪽 끝</td></tr><tr><td>네 자리가 다 같은 숫자</td><td>스캔 없이 <code>an = 4'b0000</code></td><td>실습 2 스캔</td></tr><tr><td>숫자가 깜빡임</td><td>스캔이 너무 느림 (예: <code>cnt[21:20]</code> = 한 바퀴 42 ms)</td><td>한 바퀴 1~16 ms</td></tr><tr><td>시뮬레이션에서 <code>an</code> · <code>seg</code> 가 계속 X</td><td>리셋을 안 줘서 <code>cnt</code> 가 X</td><td>TB 를 <code>rst = 1</code> 로 시작해서 몇 클럭 뒤 0</td></tr><tr><td>Critical warning <code>[Common 17-55]</code></td><td>XDC 포트 이름 ≠ 모듈 포트 이름, 또는 Top 이 다른 모듈</td><td>이름 맞추기, Set as Top (HW1 트러블슈팅)</td></tr><tr><td>타이밍 WNS 가 NA</td><td><code>create_clock</code> 줄이 빠짐</td><td>클럭 줄 두 개(<code>set_property</code>, <code>create_clock</code>) 모두 넣기</td></tr></table></div>
+<h2 id="s7">7. 용어 정리</h2>
+<div class="tw"><table><tr><th>용어</th><th>뜻</th></tr><tr><td>7세그먼트 (FND)</td><td>막대 LED 7개 + 점으로 숫자를 그리는 표시기</td></tr><tr><td>애노드 / 캐소드</td><td>LED 의 + 쪽 / − 쪽 다리</td></tr><tr><td>공통 애노드</td><td>한 자리 LED 들의 + 쪽을 한 점에 묶은 구조 (Basys3)</td></tr><tr><td>active low</td><td>0 이 켜기 신호</td></tr><tr><td>디코더</td><td>코드를 다른 코드로 바꾸는 조합 회로 (4비트 값 → 7비트 모양)</td></tr><tr><td>BCD</td><td>10진수 한 자리(0~9)를 4비트로 적는 방식</td></tr><tr><td>스캔 / 멀티플렉싱</td><td>자리를 빠르게 번갈아 켜서 선 하나를 시간으로 나눠 쓰기</td></tr><tr><td>조합 회로 / 순차 회로</td><td>입력만으로 출력이 정해지는 회로 / 지난 값을 기억하는 회로(클럭 사용)</td></tr><tr><td>클럭 · posedge</td><td>일정한 박자 신호 · 0 → 1 로 올라가는 순간</td></tr><tr><td>논블로킹 대입 <code>&lt;=</code></td><td>클럭 블록 안에서 쓰는, 한꺼번에 바뀌는 대입</td></tr><tr><td>WNS</td><td>Worst Negative Slack. 가장 빠듯한 경로의 시간 여유. 0 이상이면 그 클럭 속도에서 타이밍 통과</td></tr></table></div>
+<h2 id="s8">8. 출처 · 확인 기록</h2>
+<ul class="steps"><li>Digilent <b>Basys 3 Reference Manual</b> (2017-03-23 개정) 8.1 Seven-Segment Display — 공통 애노드, AN · CA~CG · DP 모두 0 일 때 켜짐, 한 바퀴 1~16 ms(약 1 kHz~60 Hz), 45 Hz 쯤 깜빡임.</li><li>핀 번호: 사용자 2일차 프로젝트의 <code>Basys-3-Master.xdc</code> — 7~8번 줄(클럭), 49~63번 줄(7세그먼트), 68번 줄(BTNU).</li><li>코드 확인: 2026-10-02 이 노트북 Vivado 2022.2. <code>xvlog</code> · <code>xelab</code> · <code>xsim</code> 시뮬레이션과 <code>synth_design</code> → <code>route_design</code> → <code>write_bitstream</code> 을 세 설계 모두 돌림, Critical warning 0. 보드 실물 확인은 아직.</li><li>관련 노트: 개념문답 X장 "Basys3 7세그먼트는 어떻게 켜나?" 카드, 2일차 학습노트 14절.</li></ul>
+</div>
+
+<script>
+(function(){
+  var list = document.getElementById('sideList'), links = [], curUl = null;
+  document.querySelectorAll('.wrap h2, .wrap h3').forEach(function(el, i){
+    if (!el.id) el.id = 'h' + i;
+    var li = document.createElement('li'), a = document.createElement('a');
+    a.textContent = el.textContent.replace(/p\.[\d–, ]+$/, '').trim(); a.href = '#' + el.id; li.appendChild(a);
+    if (el.tagName === 'H2') { li.className = 'sec'; curUl = document.createElement('ul'); li.appendChild(curUl); list.appendChild(li); }
+    else { li.className = 'q'; (curUl || list).appendChild(li); }
+    links.push({el: el, a: a});
+  });
+  function spy(){
+    var y = window.scrollY + 80, cur = null;
+    for (var i = 0; i < links.length; i++) { if (links[i].el.offsetTop <= y) cur = links[i]; }
+    links.forEach(function(l){ l.a.classList.toggle('on', l === cur); });
+  }
+  window.addEventListener('scroll', spy, {passive: true}); spy();
+  var side = document.getElementById('side'), btn = document.getElementById('sideToggle');
+  if (window.matchMedia('(max-width:1000px)').matches) { side.classList.add('closed'); btn.textContent = '펼치기'; btn.setAttribute('aria-expanded', 'false'); }
+  btn.addEventListener('click', function(){
+    var closed = side.classList.toggle('closed');
+    btn.textContent = closed ? '펼치기' : '접기';
+    btn.setAttribute('aria-expanded', String(!closed));
+  });
+})();
+</script>

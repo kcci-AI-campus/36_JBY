@@ -1,0 +1,421 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>손 검출 + 분류 학습노트 — EX_05 코드 한 줄씩</title>
+<style>
+:root{--navy:#0d1b3e;--navy2:#345;--ink:#1c2434;--muted:#5b647a;--paper:#f6f7fb;--card:#fff;--line:#e3e7f0;--red:#e8332a;--blue:#1769d6;--blue-soft:#eaf2fe;--amber:#b9810b;--amber-soft:#fdf3df;--gray-soft:#f1f3f8;--green:#1f7a4d;--green-soft:#e7f6ee;--term:#14171f;--term-ink:#d6dbe6;}
+@media (prefers-color-scheme:dark){:root{--navy:#c9d6f5;--navy2:#93a6d6;--ink:#e7eaf1;--muted:#9aa4bb;--paper:#12141a;--card:#1b1e26;--line:#2c313c;--blue-soft:#16243a;--amber-soft:#332a12;--gray-soft:#20242e;--green-soft:#12291d;--term:#0b0d12;--term-ink:#d6dbe6;}}
+*{box-sizing:border-box}
+body{font-family:'Apple SD Gothic Neo','Pretendard','Malgun Gothic',-apple-system,sans-serif;background:var(--paper);color:var(--ink);margin:0;line-height:1.62;font-size:15px}
+.top{background:var(--navy);color:#fff;padding:20px 0}
+@media (prefers-color-scheme:dark){.top{background:#0b0d12}}
+.top-in{max-width:1180px;margin:0 auto;padding:0 22px}
+.brand{font-size:12px;letter-spacing:.04em;opacity:.85;font-weight:800}
+.brand .dot{display:inline-block;width:8px;height:8px;background:var(--red);border-radius:50%;margin-right:6px}
+.top h1{font-size:21px;margin:6px 0 4px;color:#fff}
+.top .sub{font-size:13px;opacity:.82}
+.top .meta{margin-top:9px;display:flex;gap:7px;flex-wrap:wrap}
+.tag{font-size:11px;background:rgba(255,255,255,.13);border-radius:99px;padding:2px 10px}
+.tag.warn{background:var(--red)}
+.layout{max-width:1180px;margin:0 auto;padding:0 22px;display:grid;grid-template-columns:230px 1fr;gap:26px}
+@media (max-width:860px){.layout{grid-template-columns:1fr}.toc{display:none}}
+.toc{position:sticky;top:16px;margin-top:24px;max-height:calc(100vh - 32px);overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 12px;align-self:start}
+.toc h4{margin:6px 0 6px;font-size:11px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.toc-list{list-style:none;margin:0 0 4px;padding:0;font-size:13px}
+.toc-list li{margin:0}
+.toc-list a{display:flex;gap:8px;align-items:flex-start;color:var(--ink);text-decoration:none;padding:5px 6px;border-radius:8px}
+.toc-list a:hover{background:var(--gray-soft)}
+.toc-n{display:inline-flex;width:19px;height:19px;flex:0 0 19px;align-items:center;justify-content:center;background:var(--red);color:#fff;border-radius:6px;font-size:11px;font-weight:800;margin-top:2px}
+.toc-n.start{background:var(--blue)}
+.toc-n.gray{background:var(--navy2)}
+.main{margin-top:20px;padding-bottom:80px;min-width:0}
+h2{font-size:18px;color:var(--navy);margin:34px 0 8px;border-bottom:2px solid var(--line);padding-bottom:5px;scroll-margin-top:14px}
+h2:first-child{margin-top:4px}
+h3{font-size:15px;color:var(--navy);margin:20px 0 6px}
+.qa{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--blue);border-radius:0 10px 10px 0;padding:10px 16px;margin:10px 0}
+.qa .q{font-weight:800;margin-bottom:4px}
+.qa .q::before{content:"Q. ";color:var(--blue)}
+table{border-collapse:collapse;width:100%;margin:8px 0;font-size:13.5px}
+th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+th{background:var(--gray-soft);white-space:nowrap}
+.tbl{overflow-x:auto}
+td.ln{white-space:nowrap;font-family:Consolas,'D2Coding',monospace;font-size:12.5px;background:var(--gray-soft)}
+b{color:var(--navy)}
+.memo{background:var(--amber-soft);border-radius:8px;padding:8px 12px;margin:8px 0;font-size:13.5px}
+.memo::before{content:"🔑 비유  ";font-weight:800;color:var(--amber)}
+.warn{background:#fdeceb;border-radius:8px;padding:8px 12px;margin:8px 0;font-size:13.5px}
+@media (prefers-color-scheme:dark){.warn{background:#3a1c1a}}
+.warn::before{content:"⚠ 주의  ";font-weight:800;color:var(--red)}
+.ok{background:var(--green-soft);border-radius:8px;padding:8px 12px;margin:8px 0;font-size:13.5px}
+.ok::before{content:"✅ 한 줄  ";font-weight:800;color:var(--green)}
+.todo{background:var(--blue-soft);border-radius:8px;padding:8px 12px;margin:8px 0;font-size:13.5px}
+.todo::before{content:"👉 직접 해보기  ";font-weight:800;color:var(--blue)}
+code{background:var(--gray-soft);padding:1px 5px;border-radius:4px;font-size:13px;font-family:Consolas,'D2Coding',monospace}
+pre{background:var(--term);color:var(--term-ink);border-radius:10px;padding:12px 14px;overflow-x:auto;font-size:13px;line-height:1.55;font-family:Consolas,'D2Coding',monospace;margin:8px 0}
+pre code{background:none;padding:0;color:inherit;font-size:inherit}
+pre .c{color:#8b93a7}
+pre .g{color:#7ed49a}
+pre .r{color:#ff8a80}
+.step{display:flex;gap:10px;margin:8px 0;align-items:flex-start}
+.step .n{flex:0 0 26px;height:26px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px}
+@media (prefers-color-scheme:dark){.step .n{background:#345;color:#fff}}
+.step div{flex:1}
+.check{list-style:none;padding:0;margin:8px 0}
+.check li{padding:5px 0 5px 28px;position:relative}
+.check li::before{content:"☐";position:absolute;left:4px;top:4px;color:var(--muted)}
+.backtop{position:fixed;right:18px;bottom:18px;background:var(--navy);color:#fff;border-radius:99px;padding:8px 14px;font-size:12px;text-decoration:none;opacity:.9}
+.small{font-size:12.5px;color:var(--muted)}
+.kbd{display:inline-block;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 6px;font-size:12px;background:var(--card)}
+.fig{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;margin:10px 0}
+.fig img{max-width:100%;display:block;margin:0 auto;border-radius:6px}
+.fig .cap{font-size:12.5px;color:var(--muted);margin-top:6px;text-align:center}
+.samples{display:flex;gap:14px;flex-wrap:wrap;margin:8px 0}
+.samples .s{flex:0 0 160px;text-align:center;font-size:12.5px}
+.samples .s img{width:150px;height:150px;border-radius:8px;border:1px solid var(--line)}
+.flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0;font-size:13px}
+.flow span{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:4px 9px}
+.flow i{color:var(--muted);font-style:normal}
+</style></head><body>
+<header class="top"><div class="top-in">
+<div class="brand"><span class="dot"></span> AI 시스템반도체 설계 (2기) · 개인 학습노트</div>
+<h1>손 검출 + 분류 학습노트 — EX_05 코드 한 줄씩</h1>
+<div class="sub">Claude Code와 대화하며 정리한 내용 · MediaPipe로 손을 먼저 찾고 그 부분만 MobileNetV2에 넣는 코드 125줄 전부 풀이 · 비전공자 눈높이</div>
+<div class="meta"><span class="tag warn">개인 학습용</span><span class="tag">최초 작성 2026-09-15</span><span class="tag">실습: EX_05_Board_RPS_MobileNetV2_HD.py (HD = Hand Detection)</span><span class="tag">환경: 라즈베리파이5 보드 6번, MobaXterm SSH, USB 웹캠</span><span class="tag">노트 위치: 학습노트/</span></div>
+</div></header>
+
+<div class="layout">
+<nav class="toc">
+<h4>시작</h4>
+<ul class="toc-list">
+<li><a href="#s0"><span class="toc-n start">0</span>지금 내 상태</a></li>
+<li><a href="#s1"><span class="toc-n start">1</span>이 실습이 뭐야</a></li>
+<li><a href="#s2"><span class="toc-n start">2</span>단어 사전 (먼저 읽기)</a></li>
+<li><a href="#s3"><span class="toc-n start">3</span>큰 그림: 사진이 지나가는 길</a></li>
+</ul>
+<h4>코드 한 줄씩</h4>
+<ul class="toc-list">
+<li><a href="#s4"><span class="toc-n">4</span>모듈·손 검출기 (1~7줄)</a></li>
+<li><a href="#s5"><span class="toc-n">5</span>모델 로딩·정보 (9~20줄)</a></li>
+<li><a href="#s6"><span class="toc-n">6</span>상수 (22~25줄)</a></li>
+<li><a href="#s7"><span class="toc-n">7</span>make_square_img (27~46줄)</a></li>
+<li><a href="#s8"><span class="toc-n">8</span>processImage 앞부분: 손 찾고 자르기 (48~69줄)</a></li>
+<li><a href="#s9"><span class="toc-n">9</span>processImage 뒷부분: 추론·표시 (71~91줄)</a></li>
+<li><a href="#s10"><span class="toc-n">10</span>카메라·창·메인 루프·정리 (93~125줄)</a></li>
+</ul>
+<h4>결과와 참고</h4>
+<ul class="toc-list">
+<li><a href="#s11"><span class="toc-n gray">11</span>실행 방법과 화면 읽기</a></li>
+<li><a href="#s12"><span class="toc-n gray">12</span>EX_04와 나란히 비교</a></li>
+<li><a href="#s13"><span class="toc-n gray">13</span>왜 가위가 좋아지나</a></li>
+<li><a href="#s14"><span class="toc-n gray">14</span>직접 해보기 (실험)</a></li>
+<li><a href="#s15"><span class="toc-n gray">15</span>복습 체크리스트</a></li>
+</ul>
+</nav>
+
+<main class="main">
+
+<h2 id="s0">0. 지금 내 상태 (2026-09-15 기준)</h2>
+<div class="tbl"><table>
+<tr><th>항목</th><th>상태</th></tr>
+<tr><td>파일 (PC 원본)</td><td><code>Lec_python\2\On-DeviceAI라즈베리파이5_Lab_[64-302-01]\02.examples(Board)\examples\03_CNN_Based_On-Device_AI\EX_05_Board_RPS_MobileNetV2_HD.py</code></td></tr>
+<tr><td>파일 (보드)</td><td><code>/home/willtek/work/examples/03_CNN_Based_On-Device_AI/EX_05_Board_RPS_MobileNetV2_HD.py</code></td></tr>
+<tr><td>모델 파일</td><td>EX_04와 <b>같은</b> <code>RPS_MobileNetV2.tflite</code>. 모델은 안 바뀌고 입력 처리만 바뀐다</td></tr>
+<tr><td>앞 단계 결과</td><td>EX_04: 약 27.7 FPS, 손 없어도 답함, 가위가 특히 약함. 30줄 BGR 실수를 고치니 조금 나아짐 (원본은 <code>EX_04_backup.py</code>)</td></tr>
+<tr><td>이 코드의 사촌</td><td>어제 돌린 <code>~/work/samples/sample_01.py</code>가 이 파일과 거의 같다(모델 이름만 다름)</td></tr>
+</table></div>
+<div class="ok">이 노트는 <b>125줄을 한 줄씩</b> 설명한다. EX_04와 똑같은 줄(모델 로딩, 추론 3단계, 카메라, 메인 루프)은 짧게 쓰고 EX_04 노트로 연결했다. 새로 나온 <b>6~7, 25, 27~46, 48~69, 88, 91줄</b>은 길게 썼다.</div>
+
+<h2 id="s1">1. 이 실습이 뭐야</h2>
+<div class="qa"><div class="q">한 줄로 뭘 하는 거야?</div>
+<div>EX_04는 카메라 화면 전체를 모델에 넣었다. EX_05는 <b>화면에서 손을 먼저 찾아, 손 부분만 잘라서, 학습 사진처럼 생기게 다듬은 뒤</b> 같은 모델에 넣는다. 모델은 한 글자도 안 바뀌고, 모델에 들어가는 사진만 바뀐다.</div>
+<div class="memo">EX_04는 시험지 전체를 한 번에 채점기에 넣는 것이고, EX_05는 답안 칸만 오려서 넣는 것이다. 채점기(모델)는 같은데 오려 준 쪽이 훨씬 정확하다.</div></div>
+<div class="qa"><div class="q">왜 이게 효과가 있어?</div>
+<div>모델이 배운 사진(EX_03의 RPS_Dataset)은 "회색 벽 + 손이 화면 가득 + 300×300 정사각형"이었다. EX_04에서 들어간 사진은 "캐비닛·얼굴 + 손은 구석 + 320×240 찌그러뜨린 것"이라 배운 것과 딴판이었다. EX_05는 손 둘레만 잘라내고 정사각형에 놓아, <b>모델이 배운 사진과 비슷한 모양</b>으로 만들어 준다. 이렇게 입력을 손질하는 걸 <b>전처리</b>라고 하고, 실무에서 모델보다 전처리가 성능을 더 좌우하는 경우가 많다.</div></div>
+<div class="qa"><div class="q">손은 누가 찾아?</div>
+<div>구글 <b>MediaPipe</b>의 손 추적 모델이다. 우리가 학습시킨 게 아니라 이미 완성된 걸 가져다 쓴다. <code>cvzone</code>이라는 라이브러리가 MediaPipe를 두 줄로 쓸 수 있게 감싸 놓았고, 그게 <code>HandDetector</code>다. 즉 이 프로그램에는 <b>모델이 두 개</b> 돈다. ① MediaPipe(손 위치 찾기) → ② MobileNetV2(가위바위보 판정).</div></div>
+
+<h2 id="s2">2. 단어 사전 (먼저 읽기)</h2>
+<div>EX_04 노트에 있던 단어(Interpreter, tensor, set_tensor/invoke/get_tensor, expand_dims, argmax, VideoCapture, frame, BGR, FPS 등)는 뺐다.</div>
+<div class="tbl"><table>
+<tr><th>단어</th><th>한 줄 뜻</th><th>비유</th></tr>
+<tr><td><b>MediaPipe</b></td><td>구글이 만든 실시간 인식 도구 모음. 손, 얼굴, 자세 등을 찾는 완성된 모델이 들어 있다</td><td>기성품 센서</td></tr>
+<tr><td><b>cvzone, HandDetector</b></td><td>MediaPipe를 OpenCV와 함께 쉽게 쓰도록 감싼 라이브러리와 그 안의 손 찾기 클래스</td><td>센서용 리모컨</td></tr>
+<tr><td><b>검출</b> (detection)</td><td>"어디에 있나"를 찾는 것. 결과는 박스 좌표. 분류(classification)는 "뭐냐"를 답하는 것</td><td>검출 = 위치, 분류 = 이름</td></tr>
+<tr><td><b>Bounding Box, bbox, BB</b></td><td>물체를 둘러싼 사각형. (왼쪽 x, 위 y, 너비 w, 높이 h) 4개 숫자</td><td>사진에 그린 네모</td></tr>
+<tr><td><b>offset</b></td><td>박스를 조금 넓히는 여유 픽셀. 여기선 30</td><td>테두리 여백</td></tr>
+<tr><td><b>슬라이싱</b> <code>frame[y1:y2, x1:x2]</code></td><td>배열의 일부를 잘라내는 파이썬 문법. 사진에서는 세로 범위, 가로 범위 순서</td><td>사진 오려내기</td></tr>
+<tr><td><b>aspect ratio</b> (종횡비)</td><td>세로÷가로. 1보다 크면 세로로 긴 사진(portrait), 작으면 가로로 긴 사진(landscape)</td><td>세로 사진 / 가로 사진</td></tr>
+<tr><td><b>letterbox / padding</b></td><td>비율을 유지한 채 정사각형에 넣고 남는 부분을 단색으로 채우는 것. <code>make_square_img</code>가 하는 일. YOLO 코드에서도 같은 이름으로 나온다</td><td>영화의 위아래 검은 띠</td></tr>
+<tr><td><b>np.ones(...) * 255</b></td><td>전부 1인 배열에 255를 곱해 전부 255(흰색)인 배열 만들기</td><td>흰 도화지</td></tr>
+<tr><td><b>uint8</b></td><td>0~255 정수 자료형. 사진 픽셀의 기본형</td><td>0~255 눈금 자</td></tr>
+<tr><td><b>rectangle</b></td><td>사진에 사각형 그리기. (왼위 좌표), (오른아래 좌표), 색, 두께</td><td>네모 펜</td></tr>
+</table></div>
+
+<h2 id="s3">3. 큰 그림: 사진 한 장이 지나가는 길</h2>
+<div class="flow"><span>카메라 320×240</span><i>→</i><span><b>MediaPipe 손 찾기</b></span><i>→</i><span>박스 (x,y,w,h)</span><i>→</i><span>가장자리 검사</span><i>→</i><span>30픽셀 넓히기</span><i>→</i><span>잘라내기</span><i>→</i><span><b>흰 배경 224 정사각형</b></span><i>→</i><span>RGB</span><i>→</i><span>(1,224,224,3)</span><i>→</i><span>MobileNetV2</span><i>→</i><span>argmax</span><i>→</i><span>박스+글자</span></div>
+<div class="tbl"><table>
+<tr><th>줄</th><th>구간</th><th>EX_04와 비교</th></tr>
+<tr><td>1~7</td><td>모듈 + 손 검출기 준비</td><td>6~7줄 추가</td></tr>
+<tr><td>9~20</td><td>모델 로딩·정보</td><td>같음 (19~20줄 print만 주석)</td></tr>
+<tr><td>22~25</td><td>상수</td><td>25줄 <code>offset</code> 추가</td></tr>
+<tr><td>27~46</td><td><b>make_square_img 함수</b></td><td>전부 새것</td></tr>
+<tr><td>48~69</td><td><b>processImage 앞부분: 손 찾고 자르기</b></td><td>전부 새것</td></tr>
+<tr><td>71~91</td><td>processImage 뒷부분: RGB → 추론 → 표시</td><td>추론은 같음. 88줄 박스, 91줄 글자 위치 다름</td></tr>
+<tr><td>93~125</td><td>카메라·창·루프·정리</td><td>완전히 같음</td></tr>
+</table></div>
+
+<h2 id="s4">4. 모듈·손 검출기 (1~7줄)</h2>
+<pre><code>1  # 모듈 로딩
+2  from ai_edge_litert.interpreter import Interpreter
+3  import numpy as np
+4  import time
+5  import cv2
+6  from cvzone.HandTrackingModule import HandDetector
+7  hd = HandDetector(maxHands=1)</code></pre>
+<div class="tbl"><table>
+<tr><th>줄</th><th>뜻</th></tr>
+<tr><td class="ln">2~5</td><td>EX_04와 같다. LiteRT 실행기, 배열, 시계, OpenCV.</td></tr>
+<tr><td class="ln">6 from cvzone.HandTrackingModule import HandDetector</td><td><b>새것.</b> cvzone 라이브러리의 손 추적 모듈에서 <code>HandDetector</code> 클래스를 가져온다. 안에서 MediaPipe를 쓴다. 이 줄 때문에 실행 시 "Feedback manager requires a model with a single signature…" 경고가 뜨는데 무해하다.</td></tr>
+<tr><td class="ln">7 hd = HandDetector(maxHands=1)</td><td><b>새것.</b> 손 검출기를 하나 만들어 <code>hd</code>에 담는다. <code>maxHands=1</code>은 "한 번에 손 하나만 찾아라". 두 사람이 동시에 내는 가위바위보 게임을 만들려면 여기를 2로 바꾸는 게 첫걸음이다(EX_03 YOLO 실습의 과제와 연결).</td></tr>
+</table></div>
+
+<h2 id="s5">5. 모델 로딩·정보 (9~20줄)</h2>
+<pre><code>9   # TFLite 모델 로딩
+10  modelPath = 'RPS_MobileNetV2.tflite'
+11  interpreter = Interpreter(model_path = modelPath) # 모델 로딩
+12  interpreter.allocate_tensors() # tensor 할당
+13  input_details = interpreter.get_input_details() # input tensor 정보 얻기
+14  output_details = interpreter.get_output_details() # output tensor 정보 얻기
+15  input_dtype = input_details[0]['dtype']
+16  height = input_details[0]['shape'][1]
+17  width = input_details[0]['shape'][2]
+18  print('model input shape:', (height, width))
+19  #print(input_details)
+20  #print(output_details)</code></pre>
+<div class="tbl"><table>
+<tr><th>줄</th><th>뜻</th></tr>
+<tr><td class="ln">10 modelPath = 'RPS_MobileNetV2.tflite'</td><td>EX_04와 같은 파일. 이름만이라 <b>이 폴더에서 실행</b>해야 한다. 강사님 것을 <code>_teacher</code>로 백업하고 내 것을 덮어썼다면 내 모델이 돈다.</td></tr>
+<tr><td class="ln">11~18</td><td>EX_04와 완전히 같다. 실행기 만들기 → 메모리 잡기 → 입력·출력 정보 → 자료형·크기 읽기 → <code>(224, 224)</code> 출력. 자세한 뜻은 EX_04 노트 5절.</td></tr>
+<tr><td class="ln">19~20 #print(...)</td><td>EX_04에서는 정보를 다 찍었는데 여기선 <code>#</code>으로 꺼 두었다. 터미널이 깔끔해진다. 9줄 주석이 "TFLite"인 건 옛 이름이 남은 것.</td></tr>
+</table></div>
+
+<h2 id="s6">6. 상수 (22~25줄)</h2>
+<pre><code>22  ansToText = {0:'scissors', 1:'rock', 2:'paper'}
+23  colorList = [(255,0,0),(0,255,0),(0,0,255)]
+24  IMG_SIZE = 224
+25  offset = 30</code></pre>
+<div class="tbl"><table>
+<tr><th>줄</th><th>뜻</th></tr>
+<tr><td class="ln">22~24</td><td>EX_04와 같다. 번호→이름, 번호별 색(파랑·초록·빨강), 모델 입력 크기.</td></tr>
+<tr><td class="ln">25 offset = 30</td><td><b>새것.</b> MediaPipe가 준 손 박스는 손에 딱 붙어서 손목이나 손가락 끝이 잘리기 쉽다. 그래서 박스를 사방 30픽셀 넓혀서 자른다. 57, 60, 63줄에서 쓴다. 카메라가 320×240이니 30픽셀은 가로의 약 10%.</td></tr>
+</table></div>
+
+<h2 id="s7">7. make_square_img 함수 (27~46줄)</h2>
+<div>잘라낸 손 사진은 직사각형인데 모델은 224×224 정사각형만 받는다. 그냥 <code>resize</code>로 찌그러뜨리면 손 모양이 변해서, <b>비율은 유지하고 남는 부분을 흰색으로 채우는</b> 함수를 따로 만들었다. 학습 사진 배경이 밝은 벽이라 흰색으로 채운다.</div>
+<pre><code>27  def make_square_img(img):
+28      ho, wo = img.shape[0], img.shape[1]
+29      aspectRatio = ho/wo
+30      # 흰색의 background 이미지 준비
+31      wbg = np.ones((IMG_SIZE, IMG_SIZE, 3), np.uint8) * 255
+32      if aspectRatio > 1: # portrait
+33          k = IMG_SIZE/ho
+34          wk = int(wo*k)
+35          img = cv2.resize( img, (wk, IMG_SIZE))
+36          img_h, img_w = img.shape[0], img.shape[1]
+37          d = (IMG_SIZE - img_w) // 2
+38          wbg [:img_h, d:img_w+d] = img
+39      else: # landscape
+40          k = IMG_SIZE/wo
+41          hk = int(ho*k)
+42          img = cv2.resize( img, (IMG_SIZE, hk))
+43          img_h, img_w = img.shape[0], img.shape[1]
+44          d = (IMG_SIZE - img_h) // 2
+45          wbg [d:img_h+d, :img_w ] = img
+46      return wbg</code></pre>
+<div class="tbl"><table>
+<tr><th>줄</th><th>뜻</th></tr>
+<tr><td class="ln">27 def make_square_img(img):</td><td>잘라낸 손 사진 <code>img</code>를 받아 224×224 정사각형을 돌려주는 함수.</td></tr>
+<tr><td class="ln">28 ho, wo = img.shape[0], img.shape[1]</td><td>원래 높이(ho)와 너비(wo). 배열 shape은 (높이, 너비, 채널) 순서라 [0]이 높이.</td></tr>
+<tr><td class="ln">29 aspectRatio = ho/wo</td><td>높이÷너비. 1보다 크면 세로로 긴 사진.</td></tr>
+<tr><td class="ln">31 wbg = np.ones((224, 224, 3), np.uint8) * 255</td><td>흰 도화지. 224×224×3을 전부 1로 만든 뒤 255를 곱해 흰색. <code>uint8</code>은 사진과 같은 자료형이어야 나중에 붙일 수 있어서.</td></tr>
+<tr><td class="ln">32 if aspectRatio &gt; 1: # portrait</td><td>세로가 길면 → <b>높이를 224에 맞추고</b> 너비는 비율대로.</td></tr>
+<tr><td class="ln">33 k = IMG_SIZE/ho</td><td>배율. 예: 높이 150이면 224/150 = 1.49배.</td></tr>
+<tr><td class="ln">34 wk = int(wo*k)</td><td>새 너비 = 원래 너비 × 배율. 예: 90 × 1.49 = 134. <code>int</code>로 정수.</td></tr>
+<tr><td class="ln">35 img = cv2.resize(img, (wk, IMG_SIZE))</td><td>134×224로 줄이거나 키움. resize는 (너비, 높이) 순서라 (wk, 224).</td></tr>
+<tr><td class="ln">36 img_h, img_w = img.shape[0], img.shape[1]</td><td>바뀐 크기 다시 읽기. img_h는 224, img_w는 134.</td></tr>
+<tr><td class="ln">37 d = (IMG_SIZE - img_w) // 2</td><td>좌우 여백. (224 − 134) ÷ 2 = 45. 가운데 놓기 위한 시작 위치.</td></tr>
+<tr><td class="ln">38 wbg[:img_h, d:img_w+d] = img</td><td>흰 도화지의 세로 전체, 가로 45~179 칸에 손 사진을 붙여 넣는다. 좌우 45픽셀씩 흰 띠.</td></tr>
+<tr><td class="ln">39 else: # landscape</td><td>가로가 길거나 정사각형이면 → <b>너비를 224에 맞추고</b> 높이는 비율대로. 위와 대칭.</td></tr>
+<tr><td class="ln">40~42 k, hk, resize</td><td>예: 160×100 사진이면 k = 224/160 = 1.4, hk = 140, 224×140으로.</td></tr>
+<tr><td class="ln">43~45 d, wbg[d:img_h+d, :img_w] = img</td><td>d = (224 − 140) ÷ 2 = 42. 세로 42~181 칸, 가로 전체에 붙임. 위아래 42픽셀씩 흰 띠.</td></tr>
+<tr><td class="ln">46 return wbg</td><td>완성된 224×224 흰 배경 손 사진을 돌려준다.</td></tr>
+</table></div>
+<div class="memo">사진을 액자에 넣는 것과 같다. 세로 사진은 좌우에, 가로 사진은 위아래에 흰 여백이 생긴다. 사진을 잡아 늘리지 않으니 손 모양이 그대로다.</div>
+
+<h2 id="s8">8. processImage 앞부분: 손 찾고 자르기 (48~69줄)</h2>
+<pre><code>48  def processImage(frame):
+49      # 손 detect 시도
+50      hands, _ = hd.findHands(frame, draw=False)
+51      if not hands: return
+52
+53      # BB(Bounding Box) 얻기
+54      x, y, w, h = hands[0]['bbox']
+55
+56      # 범위 초과 확인
+57      if x&lt;offset or y&lt;offset or x+w+offset&gt;320 or y+h&gt;240: return
+58
+59      # BB의 좌상단 좌표 구하기 -&gt; 좌와 상 방향으로 offset 만큼 늘림
+60      x1, y1 = x-offset,  y-offset
+61
+62      # BB의 우하단 좌표 구하기 -&gt; 우 방향으로만 offset 만큼 늘림
+63      x2, y2 = x+w+offset, y+h
+64
+65      # 손만 떼어오기
+66      img = frame[y1:y2, x1:x2]
+67
+68      # 떼어온 손을 정사각형으로 만들기
+69      img = make_square_img(img)</code></pre>
+<div class="tbl"><table>
+<tr><th>줄</th><th>뜻</th></tr>
+<tr><td class="ln">48 def processImage(frame):</td><td>EX_04와 같은 이름. 메인 루프가 매 프레임 부른다.</td></tr>
+<tr><td class="ln">50 hands, _ = hd.findHands(frame, draw=False)</td><td><b>MediaPipe 손 찾기.</b> 찾은 손들의 목록(<code>hands</code>)과 그림이 그려진 사진을 돌려주는데, <code>draw=False</code>라 그림은 안 그리고 두 번째 값은 <code>_</code>로 버린다. 손 하나마다 박스, 관절 21개 좌표, 왼손/오른손 정보가 딕셔너리로 들어 있다.</td></tr>
+<tr><td class="ln">51 if not hands: return</td><td>손을 못 찾았으면 <b>여기서 함수 끝.</b> 아무것도 그리지 않는다. EX_04가 손 없어도 답하던 것과 결정적으로 다른 지점. 화면에 글자가 안 뜨면 이 줄에서 끝난 것.</td></tr>
+<tr><td class="ln">54 x, y, w, h = hands[0]['bbox']</td><td>첫 번째 손(<code>[0]</code>)의 박스. x, y는 왼쪽 위 모서리, w, h는 너비와 높이. 단위는 픽셀.</td></tr>
+<tr><td class="ln">57 if x&lt;offset or y&lt;offset or x+w+offset&gt;320 or y+h&gt;240: return</td><td><b>가장자리 검사.</b> 박스를 30 넓혔을 때 화면(320×240) 밖으로 나가면 함수 끝. 네 조건은 순서대로 왼쪽·위·오른쪽·아래 여유 부족. 밖으로 나간 채 자르면 66줄에서 배열 범위 오류가 나기 때문에 미리 막는 것. <b>손을 화면 중앙에 두어야 하는 이유.</b></td></tr>
+<tr><td class="ln">60 x1, y1 = x-offset, y-offset</td><td>잘라낼 사각형의 왼쪽 위. 박스보다 왼쪽으로 30, 위로 30.</td></tr>
+<tr><td class="ln">63 x2, y2 = x+w+offset, y+h</td><td>잘라낼 사각형의 오른쪽 아래. 오른쪽으로 30 넓히고, <b>아래는 안 넓힌다.</b> 아래쪽은 손목·팔이라 넣어 봐야 도움이 안 되기 때문. 주석의 "우 방향으로만"이 이 뜻.</td></tr>
+<tr><td class="ln">66 img = frame[y1:y2, x1:x2]</td><td>슬라이싱으로 손 부분만 오려낸다. 순서가 [세로, 가로]인 것에 주의. 결과는 직사각형.</td></tr>
+<tr><td class="ln">69 img = make_square_img(img)</td><td>7절 함수로 흰 배경 224×224 정사각형으로.</td></tr>
+</table></div>
+<div class="qa"><div class="q">숫자로 한 번 따라가 보면?</div>
+<div>MediaPipe가 박스 <code>x=120, y=60, w=80, h=130</code>을 줬다고 하자.<br>
+57줄: 120≥30, 60≥30, 120+80+30=230≤320, 60+130=190≤240 → 통과.<br>
+60줄: x1=90, y1=30. 63줄: x2=230, y2=190.<br>
+66줄: <code>frame[30:190, 90:230]</code> → 높이 160, 너비 140짜리 세로 사진.<br>
+69줄: 종횡비 160/140=1.14&gt;1 → portrait. k=224/160=1.4, 너비 196으로 키움. d=(224−196)/2=14. 좌우 14픽셀 흰 띠가 있는 224×224 완성.</div></div>
+
+<h2 id="s9">9. processImage 뒷부분: 추론·표시 (71~91줄)</h2>
+<pre><code>71      # BGR을 RGB로 변경
+72      img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+73
+74      # 모델의 입력 형태로 수정: (1,224,224,3)
+75      img = np.expand_dims(img, 0)
+76
+77      # 모델에 입력하여 결과 얻기
+78      #   input tensor 설정
+79      interpreter.set_tensor(input_details[0]['index'], img.astype(input_dtype))
+80      #   모델 실행
+81      interpreter.invoke()
+82      #   output tensor 얻기
+83      output_data = interpreter.get_tensor(output_details[0]['index'])[0]
+84      ans = np.argmax(output_data)
+85      text = ansToText[ans]
+86
+87      # BB 표시
+88      cv2.rectangle(frame, (x1, y1), (x2, y2), colorList[ans], 2)
+89
+90      # 판정 결과 표시
+91      cv2.putText(frame,text,(x1,y1-7),cv2.FONT_HERSHEY_PLAIN,2,colorList[ans],2)</code></pre>
+<div class="tbl"><table>
+<tr><th>줄</th><th>뜻</th></tr>
+<tr><td class="ln">72 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)</td><td>BGR → RGB. <b>EX_04의 실수가 여기선 없다.</b> 정사각형으로 만든 <code>img</code>를 제대로 변환하고 그 결과를 계속 쓴다. 순서도 EX_04와 달리 크기 조정 뒤에 색 변환.</td></tr>
+<tr><td class="ln">75 img = np.expand_dims(img, 0)</td><td>(224,224,3) → (1,224,224,3). EX_04와 같음.</td></tr>
+<tr><td class="ln">79~85</td><td>추론 3단계와 답 고르기. EX_04와 완전히 같다. 넣기 → 실행 → 꺼내기 → argmax → 이름. 자세한 뜻은 EX_04 노트 7절.</td></tr>
+<tr><td class="ln">88 cv2.rectangle(frame, (x1, y1), (x2, y2), colorList[ans], 2)</td><td><b>새것.</b> 원본 화면에 잘라낸 범위(60·63줄 좌표)를 사각형으로 그린다. 색은 판정 결과별(가위 파랑, 바위 초록, 보 빨강), 두께 2. 이 박스가 보이면 "손을 찾았고 판정도 했다"는 뜻.</td></tr>
+<tr><td class="ln">91 cv2.putText(frame, text, (x1, y1-7), …)</td><td>EX_04는 글자를 고정 위치 (180,50)에 썼는데, 여기선 <b>박스 왼쪽 위 7픽셀 위</b>에 쓴다. 손을 따라 글자가 움직인다.</td></tr>
+</table></div>
+
+<h2 id="s10">10. 카메라·창·메인 루프·정리 (93~125줄)</h2>
+<pre><code>93   # 카메라 설정
+94   cap = cv2.VideoCapture(0)
+95   cap.set(cv2.CAP_PROP_FRAME_WIDTH,320)
+96   cap.set(cv2.CAP_PROP_FRAME_HEIGHT,240)
+97   cap.set(cv2.CAP_PROP_BUFFERSIZE,1)
+99   # 윈도우 설정
+100  cv2.namedWindow('cam', cv2.WINDOW_NORMAL)
+101  cv2.resizeWindow('cam', 320+40, 240+60)
+103  startTime = time.time()
+104  while(cap.isOpened()):
+105      ret,frame=cap.read()
+106      if not ret: break
+109      processImage(frame)
+112      curTime = time.time()
+113      fps = 1/(curTime - startTime)
+114      startTime = curTime
+115      cv2.putText(frame,f'FPS: {fps:.1f}',(20, 50),cv2.FONT_HERSHEY_PLAIN,2,(0,255,255),2)
+118      cv2.imshow('cam',frame)
+121      key = cv2.waitKey(10)
+122      if  key == ord('q'): break
+124  cap.release()
+125  cv2.destroyAllWindows()</code></pre>
+<div>EX_04의 46~78줄과 <b>글자 하나 다르지 않다.</b> 줄 번호만 47씩 밀렸다. 카메라 320×240·버퍼 1, 'cam' 창, 무한 루프(찍기 → processImage → FPS → 표시 → q 확인), 카메라·창 닫기. 각 줄의 뜻은 EX_04 노트 8~11절에 있다.</div>
+<div class="small">57줄의 320과 240이 여기 95~96줄의 카메라 크기와 같은 숫자다. 카메라 해상도를 바꾸면 57줄도 같이 바꿔야 한다(실험 14번).</div>
+
+<h2 id="s11">11. 실행 방법과 화면 읽기</h2>
+<h3>실행</h3>
+<pre><code>cd ~/work/examples/03_CNN_Based_On-Device_AI
+source ~/work/env/bin/activate
+python EX_05_Board_RPS_MobileNetV2_HD.py</code></pre>
+<h3>터미널</h3>
+<div class="tbl"><table>
+<tr><th>출력</th><th>뜻</th></tr>
+<tr><td><code>INFO: Created TensorFlow Lite XNNPACK delegate for CPU.</code> (2번)</td><td>MobileNetV2용 1번 + MediaPipe용 1번. 모델이 둘이라 두 번 뜬다</td></tr>
+<tr><td><code>W0000 … inference_feedback_manager.cc … Feedback manager requires …</code></td><td>MediaPipe 잡음. 무시</td></tr>
+<tr><td><code>landmark_projection_calculator.cc … Using NORM_RECT without IMAGE_DIMENSIONS …</code></td><td>손이 처음 잡힐 때 한 번 뜨는 MediaPipe 잡음. 무시</td></tr>
+<tr><td><code>model input shape: (224, 224)</code></td><td>18줄. 정상</td></tr>
+</table></div>
+<h3>창</h3>
+<div class="tbl"><table>
+<tr><th>보이는 것</th><th>뜻</th></tr>
+<tr><td>FPS만 있고 아무것도 없음</td><td>손을 못 찾았거나(51줄), 손이 가장자리에 걸림(57줄). 손을 화면 중앙에 크게</td></tr>
+<tr><td>손 둘레에 색 박스 + 위에 글자</td><td>정상. 박스 색과 글자가 판정 결과</td></tr>
+<tr><td>FPS가 EX_04보다 낮음</td><td>정상. MediaPipe가 매 프레임 추가로 돈다. 어제 sample_01이 약 15.8, EX_04가 약 27.7이었다</td></tr>
+</table></div>
+
+<h2 id="s12">12. EX_04와 나란히 비교</h2>
+<div class="tbl"><table>
+<tr><th></th><th>EX_04</th><th>EX_05</th></tr>
+<tr><td>모델</td><td>RPS_MobileNetV2.tflite</td><td>같음</td></tr>
+<tr><td>모델 개수</td><td>1개</td><td>2개 (MediaPipe + MobileNetV2)</td></tr>
+<tr><td>모델에 들어가는 사진</td><td>화면 전체를 224로 찌그러뜨림</td><td>손 주변만 잘라 비율 유지, 흰 배경 224</td></tr>
+<tr><td>손 없을 때</td><td>그래도 셋 중 하나 답함</td><td>아무것도 안 함</td></tr>
+<tr><td>손이 가장자리</td><td>상관없이 답함</td><td>건너뜀 (30픽셀 규칙)</td></tr>
+<tr><td>화면 표시</td><td>고정 위치에 글자</td><td>손 따라다니는 박스 + 글자</td></tr>
+<tr><td>BGR→RGB</td><td>실수로 안 됨 (고치기 전)</td><td>정상</td></tr>
+<tr><td>속도</td><td>약 27.7 FPS</td><td>더 낮음 (MediaPipe 비용)</td></tr>
+<tr><td>정확도</td><td>배경·위치에 흔들림, 가위 약함</td><td>훨씬 안정 (기대)</td></tr>
+</table></div>
+<div class="ok">한 줄 요약: <b>모델은 그대로, 입력만 학습 사진과 비슷하게 만들었더니 좋아졌다.</b> 대신 손 찾는 비용만큼 느려졌다. 정확도와 속도를 맞바꾼 것.</div>
+
+<h2 id="s13">13. 왜 가위가 좋아지나</h2>
+<div>EX_04에서 가위가 제일 안 됐던 이유는 손이 화면의 작은 부분이라 224로 줄이면 <b>손가락 두 개 사이 틈이 몇 픽셀로 뭉개져</b> 바위·보와 구분이 안 됐기 때문이다. EX_05는 손 박스(예: 140×160)를 224로 <b>키우기</b> 때문에 손가락이 굵게, 틈이 넓게 보인다. 학습 사진(손이 300×300 가득)과 같은 조건이 된다. 바위·보는 덩어리라 EX_04에서도 그럭저럭 됐고, 가위에서 차이가 제일 크게 난다.</div>
+<div class="memo">멀리서 찍은 단체 사진에서 한 사람 얼굴을 알아보기 어렵지만, 그 얼굴만 잘라 확대하면 알아보기 쉬운 것과 같다.</div>
+
+<h2 id="s14">14. 직접 해보기 (실험)</h2>
+<div class="tbl"><table>
+<tr><th>바꿀 곳</th><th>어떻게</th><th>볼 것</th><th>예상</th></tr>
+<tr><td>확률 표시</td><td>85줄 뒤에 <code>text = f'{text} {output_data[ans]*100:.0f}%'</code></td><td>글자</td><td>"scissors 91%"처럼. 헷갈리는 순간 확률이 낮은 게 보임</td></tr>
+<tr><td>잘라낸 사진 보기</td><td>69줄 뒤에 <code>cv2.imshow('crop', img)</code></td><td>창 하나 더</td><td>모델에 실제로 들어가는 흰 배경 224 사진이 보임. 학습 사진과 비교해 보기. 가장 공부되는 실험</td></tr>
+<tr><td>offset 바꾸기</td><td>25줄 30 → 0, 그리고 60</td><td>박스 크기, 정확도</td><td>0이면 손가락 끝이 잘려 나빠지고, 60이면 배경이 많이 들어와 나빠짐. 30이 타협점</td></tr>
+<tr><td>흰 배경 대신 회색</td><td>31줄 <code>* 255</code> → <code>* 128</code></td><td>정확도</td><td>학습 사진 배경이 회색 벽이라 오히려 나아질 수도. 직접 확인</td></tr>
+<tr><td>손 두 개</td><td>7줄 <code>maxHands=2</code>, 54줄부터 <code>hands[0]</code>과 <code>hands[1]</code>을 각각 처리</td><td>두 손 박스</td><td>두 사람 가위바위보의 시작. 승패 판정은 그다음</td></tr>
+<tr><td>해상도 올리기</td><td>95~96줄 640·480, <b>57줄도 640·480으로</b></td><td>FPS, 인식률</td><td>손이 더 선명해 인식은 좋아지지만 MediaPipe가 느려짐</td></tr>
+</table></div>
+<div class="todo">"잘라낸 사진 보기"를 먼저. 모델이 뭘 보고 판단하는지 눈으로 보면 이 노트 전체가 한 번에 이해된다. 파일 수정은 MobaXterm 왼쪽 목록에서 더블클릭 → 편집 → 저장, 또는 <code>vi</code>(<code>:set nu</code>로 줄 번호).</div>
+
+<h2 id="s15">15. 복습 체크리스트</h2>
+<ul class="check">
+<li>EX_04와 EX_05에서 모델은 같은데 뭐가 달라졌는지 한 문장으로</li>
+<li>이 프로그램에 모델이 두 개라는 것, 각각 뭘 하는지</li>
+<li>51줄과 57줄, 두 <code>return</code>이 각각 언제 실행되는지</li>
+<li>offset이 왜 필요하고 왜 아래쪽은 안 넓히는지</li>
+<li><code>make_square_img</code>가 왜 그냥 resize가 아닌지, portrait와 landscape에서 흰 띠가 어디 생기는지</li>
+<li><code>frame[y1:y2, x1:x2]</code>에서 세로가 먼저인 이유</li>
+<li>EX_05가 EX_04보다 느린 이유</li>
+<li>가위가 EX_05에서 좋아지는 이유</li>
+<li>EX_07이 EX_05와 한 줄만 다르다는 것, 그 한 줄이 뭔지</li>
+</ul>
+<div class="ok">다음은 Colab <code>EX_06_RPS_MobileNetV2_Augmentation</code>(14분 학습)으로 증강 모델을 만들고, 그 tflite를 이 폴더에 넣어 <code>EX_07</code>을 돌리는 것. EX_07 코드는 이 노트 그대로이고 10줄의 파일 이름만 <code>RPS_MobileNetV2_Augmentation.tflite</code>다.</div>
+
+</main>
+</div>
+<a class="backtop" href="#s0">↑ 맨 위</a>
+</body></html>

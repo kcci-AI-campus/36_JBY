@@ -1,0 +1,397 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verilog 1일차 학습노트</title>
+<style>
+:root{--navy:#0d1b3e;--ink:#1c2434;--muted:#1f2737;--paper:#f6f7fb;--card:#fff;--line:#e3e7f0;--blue:#1769d6;--blue-soft:#eaf2fe;--amber-soft:#fdf3df;--gray-soft:#f1f3f8;--green-soft:#e6f5ec;--red-soft:#fde8e7;--kbd:#fff;--kbd-line:#c5ccd9;}
+@media (prefers-color-scheme:dark){:root{--navy:#c9d6f5;--ink:#e7eaf1;--muted:#c9d1e2;--paper:#12141a;--card:#1b1e26;--line:#2c313c;--blue-soft:#16243a;--amber-soft:#332a12;--gray-soft:#20242e;--green-soft:#15291d;--red-soft:#3a1d1b;--kbd:#262a34;--kbd-line:#3d4452;}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Apple SD Gothic Neo','Pretendard','Malgun Gothic',-apple-system,sans-serif;background:var(--paper);color:var(--ink);margin:0;line-height:1.62;font-size:15px;word-break:keep-all;overflow-wrap:break-word}
+.wrap{max-width:940px;margin:0 auto 0 290px;padding:28px 20px 80px}
+h1{color:var(--navy);font-size:23px;margin:0 0 4px}
+.sub{color:var(--muted);font-size:13.5px;margin-bottom:16px}
+h2{font-size:18px;color:var(--navy);margin:34px 0 8px;border-bottom:2px solid var(--line);padding-bottom:5px}
+h3{font-size:15.5px;color:var(--navy);margin:22px 0 6px}
+h2,h3{scroll-margin-top:16px}
+.pg{font-size:12px;font-weight:600;color:var(--blue);background:var(--blue-soft);border-radius:5px;padding:1px 6px;margin-left:6px;vertical-align:2px}
+.side{position:fixed;top:0;left:0;bottom:0;width:290px;overflow-y:auto;background:var(--card);border-right:1px solid var(--line);padding:16px 12px 40px;font-size:13px;line-height:1.45;z-index:10}
+.side-h{font-weight:800;color:var(--navy);font-size:15px;margin:0 4px 10px;display:flex;justify-content:space-between;align-items:center}
+.side-h button{display:none;font:inherit;font-size:12px;border:1px solid var(--line);background:var(--gray-soft);color:var(--ink);border-radius:6px;padding:2px 8px;cursor:pointer}
+.side ul{list-style:none;margin:0;padding:0}
+.side li.sec>a{display:block;font-weight:800;color:var(--navy);padding:6px 8px;border-radius:6px;margin-top:6px}
+.side li.q>a{display:block;color:var(--muted);padding:3px 8px 3px 18px;border-radius:6px;opacity:.85}
+.side a{text-decoration:none}
+.side a:hover{background:var(--gray-soft)}
+.side a.on{background:var(--blue-soft);color:var(--blue);opacity:1}
+@media (max-width:1000px){.side{position:static;width:auto;border-right:0;border-bottom:1px solid var(--line)}.side-h button{display:inline-block}.side.closed ul{display:none}.wrap{margin-left:auto}}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;margin:8px 0;font-size:13.8px;background:var(--card)}
+th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+th{background:var(--gray-soft);white-space:nowrap}
+td.c,th.c{text-align:center}
+b{color:var(--navy)}
+kbd{display:inline-block;font-family:inherit;font-size:12.5px;font-weight:700;background:var(--kbd);border:1px solid var(--kbd-line);border-bottom-width:2px;border-radius:5px;padding:0 6px;white-space:nowrap}
+code{background:var(--gray-soft);padding:1px 6px;border-radius:5px;font-size:.9em;word-break:break-all}
+pre{background:var(--gray-soft);padding:10px 12px;border-radius:8px;overflow-x:auto;font-size:12.8px;line-height:1.5;margin:6px 0}
+pre code{background:none;padding:0;word-break:normal}
+.memo{background:var(--amber-soft);border-radius:8px;padding:8px 12px;margin:8px 0;font-size:13.5px}
+.ok{background:var(--green-soft);border-radius:8px;padding:8px 12px;margin:8px 0;font-size:13.5px}
+.bad{background:var(--red-soft);border-radius:8px;padding:8px 12px;margin:8px 0;font-size:13.5px}
+.ana{background:var(--blue-soft);border-radius:8px;padding:8px 12px;margin:8px 0;font-size:13.5px}
+.ana::before{content:"비유  ";font-weight:800;color:var(--blue)}
+.steps{padding-left:22px;margin:6px 0}
+.steps li{margin:3px 0}
+.flow{background:var(--blue-soft);border-radius:8px;padding:10px 14px;margin:8px 0;font-size:14px}
+@media print{.side{display:none}.wrap{margin-left:0}@page{size:A4;margin:12mm}:root{color-scheme:light!important}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}body{font-size:12.5px}table,pre{break-inside:avoid}h2,h3{break-after:avoid}}
+</style>
+
+<nav class="side" id="side">
+<div class="side-h">📘 목차 <button type="button" id="sideToggle" aria-expanded="true">접기</button></div>
+<ul id="sideList"></ul>
+</nav>
+
+<div class="wrap">
+<h1>📘 Verilog 1일차 학습노트 (2026-09-30)</h1>
+<div class="sub">김창형 교수님 1일차 자료 <code>Lec_verilog\day1.pdf</code>(38쪽, 판서 포함) 전체를 쪽 순서대로 옮기고 풀어 쓴 노트 · 파란 <span class="pg">p.N</span> 은 PDF 쪽 번호 · 교수님 화면은 Vivado <b>2020.2</b>, 이 노트북은 <b>2022.2</b>(메뉴 위치는 같았다 — 9/30 실습으로 확인) · 슬라이드 그림은 교수님 자료라 이 노트에 붙이지 않았다(학습노트 폴더는 공개 저장소에 올라감). 그림은 PDF 의 해당 쪽을 함께 보면 된다 · 단축키·메뉴 순서만 빨리 찾으려면 <code>단축키_명령어_모음.html</code></div>
+
+<!-- ============================================================ -->
+<h2 id="s0">0. 오리엔테이션 — 도구와 일정 <span class="pg">p.1–2</span></h2>
+<div class="tw"><table>
+<tr><th>항목</th><th>교수님 지정</th><th>뜻</th></tr>
+<tr><td>소스 관리</td><td><b>GitHub</b></td><td>코드를 버전별로 저장·백업하는 곳</td></tr>
+<tr><td>개인 포트폴리오</td><td><b>Notion</b></td><td>취업용 포트폴리오를 정리할 곳</td></tr>
+<tr><td>도구</td><td>Vivado 2020.2, Visual Studio Code, vim</td><td>Vivado = Xilinx FPGA 통합 개발 도구. 나중에 VCS(Synopsys 시뮬레이터)도 씀</td></tr>
+</table></div>
+<p>10월 달력 판서 <span class="pg">p.2</span>:</p>
+<div class="tw"><table>
+<tr><th>날짜</th><th>할 일</th></tr>
+<tr><td>~10/5</td><td>Verilog · Vivado · VS Code <b>따라 하기</b></td></tr>
+<tr><td>10/6~</td><td><b>교재 + project</b> 시작 → 스톱워치 / 시계</td></tr>
+<tr><td>10/12 무렵</td><td>"교재 완료"</td></tr>
+<tr><td>10/19</td><td><b>발표</b> → 이후 UART + FIFO</td></tr>
+<tr><td>10/26~</td><td>센서 2종 + UART + 스톱워치/시계 합치기</td></tr>
+<tr><td><b>11/2</b></td><td>발표 (2인 1조 또는 4인 1조)</td></tr>
+</table></div>
+<p>용어: <b>UART</b> = 선 두 가닥으로 한 비트씩 차례로 보내는 가장 흔한 통신 방식(PC 와 보드가 글자를 주고받을 때). <b>FIFO</b> = 먼저 들어온 데이터가 먼저 나가는 줄 서기 버퍼(First In First Out).</p>
+<div class="memo">교수님 말씀(사용자 메모): 회사 가면 Python 은 자동화용으로 무조건 쓴다 · 하드웨어 디버깅과 개념을 잘 알아야 한다 · <b>FFT·푸리에 변환은 면접에서 다 물어본다</b> · 방산은 FPGA Verilog 설계. 미니프로젝트 주제는 말씀하셨는데 못 들음 → 다음 시간에 확인.</div>
+
+<!-- ============================================================ -->
+<h2 id="s1">1. Vivado 시작과 프로젝트 만들기 <span class="pg">p.3–7</span></h2>
+
+<h3 id="s1-1">Vivado 란 <span class="pg">p.3</span></h3>
+<p>판서: <b>Xilinx FPGA 통합 개발 Tool</b>. 설계 언어는 <b>Verilog HDL</b>(판서 "90%")과 VHDL 이 있고, 이 과정은 Verilog 를 쓴다. 새 프로젝트는 시작 화면 <b>Create Project</b> 또는 <b>File → Project → New…</b></p>
+
+<h3 id="s1-2">처음 한 번 해 둘 설정 <span class="pg">p.4</span></h3>
+<ol class="steps">
+<li><b>Tools → Settings… → Project</b></li>
+<li>Default Project Directory 에서 <b>Specify project directory</b> 선택 → 작업 폴더 지정(교수님 예: <code>D:/work/26_AI_CAMP_2</code>)</li>
+<li>Target Language: <b>Verilog</b> → OK</li>
+</ol>
+<div class="bad">프로젝트 이름·경로에 <b>한글 ✕, 공백 ✕</b> (판서). 교수님 예시는 <code>C:/work</code> 또는 <code>D:/work</code>.<br>
+→ 이 노트북에서 직접 시험: 폴더 이름만 한글로 바꿔도 합성이 <code>synth_design ERROR</code> 로 깨졌다(영문 폴더는 성공). 탐색기에 "사용자"로 보이는 <code>C:\Users</code> 는 진짜 이름이 영어라 괜찮다.</div>
+<div class="ok">이 노트북의 작업 폴더: <code>C:\Users\LG\Developer\work\26_AI_CAMP_2\</code> (영문만이라 안전)</div>
+
+<h3 id="s1-3">New Project 마법사 <span class="pg">p.5–7</span></h3>
+<div class="tw"><table>
+<tr><th>화면</th><th>고를 것</th><th>뜻</th></tr>
+<tr><td>Project Name</td><td>이름 <code>20260930_gates</code>, ☑ Create project subdirectory</td><td>날짜_주제 로 이름을 지으면 정리가 쉽다</td></tr>
+<tr><td>Project Type</td><td>◉ <b>RTL Project</b> (판서 "설계"), ☑ Do not specify sources at this time</td><td>RTL = 내가 Verilog 로 직접 회로를 쓰는 프로젝트. 파일은 나중에 추가</td></tr>
+<tr><td>Default Part</td><td><b>Boards</b> 탭 → 검색 <code>ba</code> → <b>Basys3</b> (digilentinc.com, 1.2, xc7a35tcpg236-1)</td><td>보드를 고르면 칩도 자동으로 정해진다. 목록에 없으면 보드 파일 설치 필요 ↓</td></tr>
+<tr><td>Summary</td><td>Finish</td><td></td></tr>
+</table></div>
+<p><b>보드 파일 위치</b> <span class="pg">p.6</span>: <code>C:\Xilinx\Vivado\2020.2\data\boards\board_files\basys3\C.0\</code> 안에 <code>board.xml</code>, <code>part0_pins.xml</code>, <code>preset.xml</code>. (이 노트북은 <code>…\2022.2\…</code>, 9/30 설치·인식 확인. 압축이 한 단계 깊게 풀리면 인식 안 됨 — 트러블슈팅 TS-27)</p>
+
+<h3 id="s1-4">칩 이름 읽는 법 <span class="pg">p.7</span></h3>
+<p><code>xc7a35tcpg236-1</code> 을 교수님이 나눠 쓴 판서:</p>
+<div class="tw"><table>
+<tr><th>조각</th><th>판서</th><th>덧붙임 (확인한 것)</th></tr>
+<tr><td><code>xc7a35t</code></td><td>칩(소자) 이름. <code>t</code> 에 "transceiver" 표시</td><td>7 = 7 시리즈, a = Artix. 35T 는 논리 셀 33,280개급(Digilent 설명서)</td></tr>
+<tr><td><code>cpg236</code></td><td><b>Package</b> 이름</td><td>칩을 감싼 겉모양·핀 배열 종류</td></tr>
+<tr><td><code>-1</code></td><td><b>Speed Grade</b></td><td>같은 칩의 속도 등급. 이 노트북에 -1, -2, -2L, -3 이 설치돼 있고 Basys3 는 <b>-1</b></td></tr>
+</table></div>
+
+<!-- ============================================================ -->
+<h2 id="s2">2. Vivado 화면과 설계 흐름 <span class="pg">p.8, 17–18</span></h2>
+<p>왼쪽 <b>Flow Navigator</b> 를 위에서 아래로 따라가면 된다. 판서 번호:</p>
+<div class="tw"><table>
+<tr><th class="c">순서</th><th>Flow Navigator</th><th>하는 일</th></tr>
+<tr><td class="c">①</td><td>PROJECT MANAGER → Sources 창의 <b>+</b> (Add Sources)</td><td><b>설계</b>: Verilog 파일 만들기</td></tr>
+<tr><td class="c">②</td><td>SIMULATION → Run Simulation</td><td>테스트벤치로 동작 확인(파형)</td></tr>
+<tr><td class="c">③</td><td>RTL ANALYSIS → Open Elaborated Design → Schematic</td><td>내 코드가 어떤 회로로 해석됐는지 그림으로 보기</td></tr>
+<tr><td class="c">④</td><td>SYNTHESIS → Run Synthesis</td><td><b>합성</b>: 코드를 실제 게이트 목록으로</td></tr>
+<tr><td class="c">⑤</td><td>IMPLEMENTATION → Run Implementation</td><td><b>배치</b>(판서): 게이트를 칩 안 실제 자리에 놓고 선 잇기</td></tr>
+<tr><td class="c">⑥</td><td>PROGRAM AND DEBUG → Generate Bitstream → Open Hardware Manager</td><td><code>*.bit</code> 파일을 만들어 보드에 올리기</td></tr>
+</table></div>
+<p>아래쪽 창: <b>Tcl Console</b>(명령 입력·기록), <b>Messages</b>(판서 "debug message" — 경고·오류 모음), Log, Reports, Design Runs. 가운데 <b>Project Summary → Settings → Edit</b> = 프로젝트 설정 바꾸기.</p>
+
+<h3 id="s2-1">프로젝트 폴더 구조 <span class="pg">p.17</span></h3>
+<div class="tw"><table>
+<tr><th>폴더 / 파일</th><th>판서</th><th>git 에 올리나</th></tr>
+<tr><td><code>20260930_gates.xpr</code></td><td><b>프로젝트 manage file</b> (이걸 열면 프로젝트가 열림)</td><td>올림</td></tr>
+<tr><td><code>….srcs\sources_1\new\gates.v</code></td><td><b>source directory</b>. Vivado 안에서 <b>Create</b> 한 파일은 <code>new</code> 에, 밖의 파일은 <b>Import: Add File</b></td><td>올림 (내가 쓴 코드)</td></tr>
+<tr><td><code>….sim</code></td><td>simulation log</td><td>안 올림(생성물)</td></tr>
+<tr><td><code>….cache</code>, <code>….hw</code>, <code>….ip_user_files</code>, <code>….runs</code></td><td>(✓ 표시만)</td><td>안 올림(생성물, Vivado 가 다시 만든다)</td></tr>
+</table></div>
+
+<h3 id="s2-2">Project Summary <span class="pg">p.18</span></h3>
+<p>Settings(이름·위치·Part·Top module·언어), Board Part, <b>Synthesis</b>(판서 "합성 결과": 상태·메시지), Implementation, <b>DRC Violations</b>(설계 규칙 위반), <b>Utilization</b>(칩 자원을 얼마나 썼나), <b>Timing</b>, <b>Power</b>. 합성·구현을 돌리면 여기가 채워진다.</p>
+
+<!-- ============================================================ -->
+<h2 id="s3">3. 설계 파일 만들기 <span class="pg">p.9–10, 16</span></h2>
+<ol class="steps">
+<li>Sources 창 <b>+</b> → ◉ <b>Add or create design sources</b> → Next</li>
+<li><b>Create File</b> → File type <b>Verilog</b>, File name <code>gates</code>, Location &lt;Local to Project&gt; → OK → Finish</li>
+<li>Define Module 창: Module name <code>gates</code> → 포트는 비워 두고 OK (코드에서 직접 쓴다)</li>
+</ol>
+<p>Sources 창 읽기 <span class="pg">p.10</span>: <code>gates (gates.v)</code> 에서 앞의 <code>gates</code> = <b>module 이름</b>(판서: "설계의 기본 단위 module"), 괄호 안 <code>gates.v</code> = <b>파일 이름</b>. 이름 앞 계층 아이콘이 붙은 것이 <b>Top module</b> — Vivado 가 <b>자동으로 찾아 준다</b>(Auto Detection).</p>
+<div class="bad"><b>문법 오류 예</b> <span class="pg">p.16</span>: <code>module gates ()</code> 뒤에 <b><code>;</code> 를 빠뜨리면</b> Messages 에 <code>[HDL 9-806] Syntax error near "endmodule"</code>. 오류가 가리키는 줄(<code>endmodule</code>)이 아니라 <b>그 앞 줄</b>이 원인인 경우가 많다.</div>
+
+<!-- ============================================================ -->
+<h2 id="s4">4. VS Code 를 Vivado 와 연결 <span class="pg">p.11–15</span></h2>
+
+<h3 id="s4-1">Vivado 에서 파일을 열면 VS Code 로 열리게 <span class="pg">p.11</span></h3>
+<ol class="steps">
+<li>Vivado <b>Tools → Settings → Tool Settings → Text Editor</b></li>
+<li>Current Editor: <b>Custom Editor…</b> → <b>…</b> 버튼</li>
+<li>Editor 칸에 아래를 그대로 입력 (교수님 PC 경로를 이 노트북 경로로 바꾼 것):</li>
+</ol>
+<pre><code>"C:/Users/LG/AppData/Local/Programs/Microsoft VS Code/Code.exe" -g [file name]:[line number]</code></pre>
+<div class="memo">판서 "<b>띄어쓰기</b>" — 경로에 공백(<code>Microsoft VS Code</code>)이 있어서 <b>큰따옴표로 감싸야</b> 하고, <code>-g</code> 앞뒤에 한 칸씩 띄운다. <code>-g [파일]:[줄]</code> 은 "그 파일의 그 줄로 바로 가라"는 VS Code 옵션이라, Messages 의 오류를 더블클릭하면 VS Code 가 해당 줄을 연다.<br>
+이 노트북의 <code>Code.exe</code> 위치는 확인함(2026-10-01). 이렇게 연결해 두면 <b>Vivado 편집기에서 한글 주석이 깨져 보이는 문제</b>도 피할 수 있다(파일을 VS Code 가 열기 때문).</div>
+
+<h3 id="s4-2">VS Code 확장 2개 <span class="pg">p.12–14</span></h3>
+<div class="tw"><table>
+<tr><th>확장</th><th>하는 일</th><th>교수님 설정</th><th>이 노트북</th></tr>
+<tr><td><b>SystemVerilog and Verilog Formatter</b> (Borja Penuelas)</td><td>코드 줄 맞춤·들여쓰기를 자동으로 정리(formatter)</td><td>Command Line Arguments: <code>--column_limit 80 --indentation_spaces 4</code><br>Verible Build: <code>win64</code></td><td>설치됨 ✅ (설정값은 확인 안 함)</td></tr>
+<tr><td><b>Verilog-HDL/SystemVerilog</b> (Masahiro Hiramori)</td><td>문법 색칠 + <b>linter</b>(판서 "문법 checker": 저장할 때 문법 오류에 밑줄)</td><td>Verilog › Linting › Linter: <b><code>xvlog</code></b><br>Iverilog › Verilog HDL Standard: <code>Verilog-2005</code><br>Iverilog › System Verilog Standard: <code>SystemVerilog2012</code></td><td>설치됨 ✅ (설정값은 확인 안 함)</td></tr>
+</table></div>
+<p>설정 여는 법: 확장 목록에서 해당 확장의 <b>톱니바퀴 → Settings</b>. 정리 실행: <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> → <b>SystemVerilog Formatter - Format this file</b> <span class="pg">p.20</span>.</p>
+<p><b>Verible</b> = 구글이 만든 SystemVerilog 도구 모음. 이 확장이 내부에서 쓰는 정리 프로그램이다.</p>
+
+<h3 id="s4-3">PATH 에 Vivado 넣기 <span class="pg">p.15</span></h3>
+<p>linter 가 <code>xvlog</code> 를 찾으려면 Vivado <code>bin</code> 폴더가 <b>PATH</b>(명령 이름만 치면 찾아 주는 폴더 목록)에 있어야 한다.</p>
+<ol class="steps">
+<li>시작 메뉴 검색 "<b>시스템 환경 변수 편집</b>" → 고급 탭 → <b>환경 변수(N)…</b></li>
+<li>Path → 편집 → 새로 만들기 → <code>C:\Xilinx\Vivado\2020.2\bin</code> (교수님 PC)</li>
+</ol>
+<div class="ok">이 노트북: 사용자 Path 에 <code>C:\Xilinx\Vivado\2022.2\bin</code> 이 <b>이미 있음</b>(2026-10-01 확인). 따로 할 일 없음. 교수님 PC 에는 <code>C:\Program Files\Vim\vim91</code> 도 들어 있다 — 이 노트북에는 Windows 용 Vim 이 아직 없다(나중에 vim 배울 때 설치).</div>
+
+<!-- ============================================================ -->
+<h2 id="s5">5. 첫 회로: gates 모듈 <span class="pg">p.19–20</span></h2>
+
+<h3 id="s5-1">회로와 진리표 <span class="pg">p.19</span></h3>
+<p>입력 <code>a</code>, <code>b</code> 두 개로 기본 논리 게이트 7개를 한꺼번에 만든다. <b>진리표</b> = 입력의 모든 경우에 출력이 무엇인지 적은 표.</p>
+<div class="tw"><table>
+<tr><th class="c">a</th><th class="c">b</th><th class="c">y0<br>AND</th><th class="c">y1<br>NAND</th><th class="c">y2<br>OR</th><th class="c">y3<br>NOR</th><th class="c">y4<br>XOR</th><th class="c">y5<br>XNOR</th><th class="c">y6<br>NOT a</th></tr>
+<tr><td class="c">0</td><td class="c">0</td><td class="c">0</td><td class="c">1</td><td class="c">0</td><td class="c">1</td><td class="c">0</td><td class="c">1</td><td class="c">1</td></tr>
+<tr><td class="c">0</td><td class="c">1</td><td class="c">0</td><td class="c">1</td><td class="c">1</td><td class="c">0</td><td class="c">1</td><td class="c">0</td><td class="c">1</td></tr>
+<tr><td class="c">1</td><td class="c">0</td><td class="c">0</td><td class="c">1</td><td class="c">1</td><td class="c">0</td><td class="c">1</td><td class="c">0</td><td class="c">0</td></tr>
+<tr><td class="c">1</td><td class="c">1</td><td class="c">1</td><td class="c">0</td><td class="c">1</td><td class="c">0</td><td class="c">0</td><td class="c">1</td><td class="c">0</td></tr>
+</table></div>
+<p>NAND·NOR·XNOR 은 각각 AND·OR·XOR 의 결과를 <b>뒤집은(NOT)</b> 것이다. 판서에서 <code>~(a &amp; b)</code> 의 <code>~</code> 에 "Not" 이라고 적혀 있다. XOR(배타적 OR) = 두 입력이 <b>다를 때만</b> 1.</p>
+
+<h3 id="s5-2">코드 <span class="pg">p.20</span></h3>
+<pre><code>`timescale 1ns / 1ps
+module gates (
+    input  a,
+    input  b,
+    output y0,
+    output y1,
+    output y2,
+    output y3,
+    output y4,
+    output y5,
+    output y6
+);
+    assign y0 = a &amp; b;     // a and b
+    assign y1 = ~(a &amp; b);  // a nand b
+    assign y2 = a | b;     // a or b
+    assign y3 = ~(a | b);  // a nor b
+    assign y4 = a ^ b;     // a exor b
+    assign y5 = ~(a ^ b);  // a exnor b
+    assign y6 = ~a;        // not a
+endmodule</code></pre>
+<div class="tw"><table>
+<tr><th>부분</th><th>판서·설명</th></tr>
+<tr><td><code>`timescale 1ns / 1ps</code></td><td>맨 앞 <code>`</code> 는 작은따옴표가 아니라 <b>grave accent</b>(키보드 <kbd>Esc</kbd> 아래 키). <b>Verilog Simulation 시간 단위</b>. 앞 <code>1ns</code> = <b>동작 단위</b>(<code>#1</code> 이 1 ns), 뒤 <code>1ps</code> = <b>해석(시뮬레이션) 정밀도</b></td></tr>
+<tr><td><code>input a,</code></td><td>앞에 <code>wire</code> 가 <b>생략</b>돼 있다(<code>input wire a</code>). 크기를 안 쓰면 <b>1 bit</b></td></tr>
+<tr><td><code>( … );</code></td><td>괄호 안 = 포트(입출력) 목록. <b>닫는 괄호 뒤 <code>;</code></b> 빠뜨리면 p.16 오류</td></tr>
+<tr><td><code>assign</code></td><td><b>연결한다</b>(판서 "wire"). 위아래 순서가 없다 — <b>왜? HW 구성으로 배치</b>되기 때문(7개 게이트가 동시에 존재)</td></tr>
+<tr><td><code>&amp; | ^ ~</code></td><td>AND, OR, XOR, NOT. 비트 하나하나에 대한 연산(비트 연산자)</td></tr>
+</table></div>
+
+<h3 id="s5-3">시간 단위와 주파수 <span class="pg">p.20, 25</span></h3>
+<div class="tw"><table>
+<tr><th>시간</th><th>10의 거듭제곱 (초)</th><th>1 주기가 이 시간이면 주파수는</th></tr>
+<tr><td>1 s</td><td>10<sup>0</sup></td><td>1 Hz</td></tr>
+<tr><td>1 ms</td><td>10<sup>-3</sup></td><td>1 kHz</td></tr>
+<tr><td>1 µs</td><td>10<sup>-6</sup></td><td>1 MHz</td></tr>
+<tr><td>1 ns</td><td>10<sup>-9</sup></td><td>1 GHz</td></tr>
+<tr><td>1 ps</td><td>10<sup>-12</sup></td><td>1 THz</td></tr>
+</table></div>
+<p>주파수 = 1 ÷ 주기. Basys3 의 클럭은 100 MHz 이므로 한 주기는 10 ns 다.</p>
+
+<!-- ============================================================ -->
+<h2 id="s6">6. RTL 회로도와 Netlist <span class="pg">p.21–22</span></h2>
+<p><b>RTL ANALYSIS → Open Elaborated Design → Schematic</b> 을 누르면 내 코드가 그림으로 나온다. 판서: 왼쪽 <b>input</b>(a, b), 가운데 사각형 = <b>gates module</b>, 오른쪽 <b>output</b>(y0~y6). 게이트 기호 아래 <code>RTL_AND</code>, <code>RTL_OR</code>, <code>RTL_XOR</code>, <code>RTL_INV</code>(INV = 인버터 = NOT).</p>
+<div class="tw"><table>
+<tr><th>Netlist 창</th><th>판서</th><th>뜻</th></tr>
+<tr><td>Nets (9)</td><td>→ <b>wire</b></td><td>선. a, b, y0~y6 아홉 가닥</td></tr>
+<tr><td>Leaf Cells (7)</td><td>→ <b>cell</b>, RTL Logic</td><td>부품. y0_i(RTL_AND) … y6_i(RTL_INV) 일곱 개</td></tr>
+</table></div>
+<p><b>Netlist</b> = "어떤 부품(cell)들이 어떤 선(net)으로 연결됐는가" 목록.</p>
+<p>판서 <span class="pg">p.22</span>: 실제 칩 <b>7404 Hex Inverter</b>(NOT 게이트 6개가 든 14핀 IC) 그림과 칩 안의 <b>Die</b>(실리콘 조각), "Die size", 그리고 <b>Design → Synthesis → Layout</b> 흐름. 칩을 만드는 회사에서는 설계가 결국 실리콘 위의 배치(Layout)가 되고, FPGA 에서는 그 대신 이미 있는 칩 안의 자원에 배치한다.</p>
+
+<!-- ============================================================ -->
+<h2 id="s7">7. 테스트벤치 <span class="pg">p.22–25</span></h2>
+
+<h3 id="s7-1">테스트벤치 파일 만들기 <span class="pg">p.23</span></h3>
+<ol class="steps">
+<li>Sources <b>+</b> → ◉ <b>Add or create simulation sources</b> → Create File → <code>tb_gates</code></li>
+<li>Simulation Sources → sim_1 아래 <code>tb_gates</code> 에서 <b>마우스 오른쪽 → Set as Top</b> (판서 "Top module for Simulation")</li>
+</ol>
+<p>판서 <span class="pg">p.22</span>: 파란 상자 <b>test_bench (tb_gates)</b> 안에 <code>gates</code> 를 넣고, 왼쪽에서 a·b 에 <code>0</code>/<code>1</code> 을 넣어 주고, 오른쪽 y0~y6 을 지켜본다.</p>
+<div class="ana">설계(gates)는 자동차, 테스트벤치는 자동차를 올려놓고 페달을 밟아 보는 검사대. 검사대는 칩에 들어가지 않는다.</div>
+
+<h3 id="s7-2">코드 <span class="pg">p.24–25, 28</span></h3>
+<pre><code>`timescale 1ns / 1ps
+module tb_gates ();
+    reg  a, b;
+    wire y0, y1, y2, y3, y4, y5, y6;
+
+    gates DUT (
+        .a (a),
+        .b (b),
+        .y0(y0),
+        .y1(y1),
+        .y2(y2),
+        .y3(y3),
+        .y4(y4),
+        .y5(y5),
+        .y6(y6)
+    );
+
+    // for simulation
+    initial begin
+        a = 0;
+        b = 0;
+        #1;  // delay 1nsec
+        a = 1;
+        b = 0;
+        #1;
+        a = 0;
+        b = 1;
+        #1;
+        a = 1;
+        b = 1;
+        $stop;
+    end
+endmodule</code></pre>
+<p>(p.28 화면 기준. 사용자 파일 <code>tb_gates.v</code> 에는 <code>$stop</code> 앞에 <code>#1;</code> 이 하나 더 있어서 마지막 a=1, b=1 결과도 파형에 남는다 — 사용자 주석 "뒤에 딜레이 안 주면 a=1, b=1 에 대한 결과는 못 봄")</p>
+<div class="tw"><table>
+<tr><th>부분</th><th>판서·설명</th></tr>
+<tr><td><code>module tb_gates ();</code></td><td><b>시뮬레이션용 Test module</b>. 포트가 없다(밖과 연결할 일이 없으니까)</td></tr>
+<tr><td><code>reg a, b;</code></td><td><b>register 의 약자</b>. "1 bit 자료형". <b>값을 Drive(넣어 줄) 수 있고, 값을 스스로 유지</b>한다 → 입력을 넣어 주는 쪽(input drive)</td></tr>
+<tr><td><code>wire y0 …;</code></td><td><b>연결용, metal line</b>(칩 안의 금속 배선). 출력은 연결만 한다</td></tr>
+<tr><td><code>gates DUT ( … );</code></td><td><code>gates</code> = 설계 모듈 이름, <code>DUT</code> = <b>인스턴스(실체화) 이름</b>. DUT = <b>Design Under Test</b>(시험 대상). 판서 "U(nit) U(nder) T(est)" 라고도 함</td></tr>
+<tr><td><code>.a (a)</code></td><td><b>gates 모듈의 port 이름(.a)으로 내부 변수(a)를 연결</b>할 때 쓰는 모양. 점 뒤가 모듈 쪽 이름, 괄호 안이 테스트벤치 쪽 이름</td></tr>
+<tr><td><code>initial begin … end</code></td><td>판서 "초기화". 시뮬레이션 시작 때 <b>한 번</b> 위에서 아래로 실행. 안에서 하는 일은 두 가지: <b>값을 write(변경)</b>, <b>시간 Delay</b></td></tr>
+<tr><td><code>#1;</code></td><td><b># Number = Delay 시간</b>. <code>`timescale 1ns</code> 이므로 <code>#1</code> = <b>1 ns</b> 기다림</td></tr>
+<tr><td><code>$stop;</code></td><td><b>시스템 Task</b>(이름이 <code>$</code> 로 시작하는 시뮬레이터 내장 명령). 시뮬레이션을 <b>멈춘다</b>. 비슷한 것으로 <code>$finish</code>(끝낸다)</td></tr>
+</table></div>
+<div class="bad"><b>Multiple Driven error</b> <span class="pg">p.24</span> — 한 선을 여러 곳에서 동시에 값을 넣으려 하면 오류. 판서 "<b>물리적 허용되지 않음</b>". 한쪽은 1, 다른 쪽은 0 을 밀면 실제 회로에서는 합선(쇼트)이 나기 때문. 그래서 <b>입력은 reg 로 넣어 주고, 출력은 wire 로 연결만</b> 한다.</div>
+<div class="memo"><code>initial</code>, <code>#1</code>, <code>$stop</code> 은 <b>시뮬레이션에서만</b> 쓰는 문법이다. 실제 칩에는 "1 ns 기다려라" 같은 부품을 만들 수 없어서 설계 파일(gates.v)에는 쓰지 않는다.</div>
+
+<!-- ============================================================ -->
+<h2 id="s8">8. 시뮬레이션 실행과 파형 <span class="pg">p.26–28</span></h2>
+<p><b>SIMULATION → Run Simulation → Run Behavioral Simulation</b>. 창 세 개 <span class="pg">p.26</span>:</p>
+<div class="tw"><table>
+<tr><th>창</th><th>보이는 것</th></tr>
+<tr><td><b>Scope</b></td><td>계층 구조: <code>tb_gates</code> 안에 <code>DUT</code>(gates), <code>glbl</code>(Vivado 가 자동으로 넣는 전역 모듈)</td></tr>
+<tr><td><b>Objects</b></td><td>고른 Scope 안의 신호와 현재 값</td></tr>
+<tr><td><b>Waveform</b></td><td>시간에 따라 신호가 0/1 로 바뀌는 그림(판서 "wave form", 위쪽 눈금 = 시간). 기본으로 1,000 ns 까지 돈다</td></tr>
+</table></div>
+<p>파형 읽기 <span class="pg">p.27</span>: 0~1 ns 에 a=0,b=0 → 1 ns 마다 a·b 가 바뀌고, 그때마다 y0~y6 이 위 진리표대로 바뀐다. 신호 이름은 <code>y0/AND</code> 처럼 바꿔 두면 보기 쉽다.</p>
+<h3 id="s8-1">툴바 <span class="pg">p.28</span></h3>
+<div class="tw"><table>
+<tr><th>버튼</th><th>판서</th></tr>
+<tr><td>▶ (Run All)</td><td><b>run_all</b> — <code>$stop</code> 이나 끝까지 돌린다</td></tr>
+<tr><td>▶ 옆 숫자 칸 + 단위</td><td><b>시간 단위 설정</b> — 그만큼만 더 돌린다</td></tr>
+<tr><td>↻ (Relaunch)</td><td><b>reLaunch: 다시 실행</b> — 코드를 고친 뒤 처음부터 다시</td></tr>
+</table></div>
+<div class="memo">코드를 고친 뒤에는 <b>↻ Relaunch</b> 를 쓴다. 시뮬레이션 창이 열린 채로 Run Simulation 을 또 누르면 <code>simulate.log</code> 를 지우지 못한다는 오류가 날 수 있다(9/30 실제로 겪음 — 이전 시뮬레이터 <code>xsimk.exe</code> 가 파일을 잡고 있었다). 그때는 SIMULATION 제목줄 ✕ 로 닫고 다시 실행.</div>
+
+<!-- ============================================================ -->
+<h2 id="s9">9. 보드 핀 배치 (I/O Planning) <span class="pg">p.29–31</span></h2>
+<p>RTL 회로도를 연 상태에서 아래 창의 <b>I/O Ports</b>(Find Results)를 보면 포트마다 <b>Package Pin</b>(FPGA 의 몇 번 다리에 연결할지)이 비어 있고, I/O Std 가 <code>default (LVCMOS18)</code>, Vcco 1.800 으로 돼 있다 <span class="pg">p.29</span>. 판서: <b>SW0 → a</b>, <b>SW1 → b</b>, LED → y.</p>
+<p>보드 회로도(Basys3 schematic) <b>BANK 14</b> 에서 스위치·LED 가 꽂힌 FPGA 핀을 찾아 <span class="pg">p.30</span>:</p>
+<div class="tw"><table>
+<tr><th>포트</th><th>보드 부품</th><th>Package Pin</th><th>I/O Std</th></tr>
+<tr><td>a</td><td>SW0</td><td>V17</td><td rowspan="9">LVCMOS33<br>(Bank 14, Vcco 3.3 V)</td></tr>
+<tr><td>b</td><td>SW1</td><td>V16</td></tr>
+<tr><td>y0</td><td>LD0</td><td>U16</td></tr>
+<tr><td>y1</td><td>LD1</td><td>E19</td></tr>
+<tr><td>y2</td><td>LD2</td><td>U19</td></tr>
+<tr><td>y3</td><td>LD3</td><td>V19</td></tr>
+<tr><td>y4</td><td>LD4</td><td>W18</td></tr>
+<tr><td>y5</td><td>LD5</td><td>U15</td></tr>
+<tr><td>y6</td><td>LD6</td><td>U14</td></tr>
+</table></div>
+<p>판서: Package Pin = <b>FPGA PIN 이름</b>, Bank = <b>region</b>(핀 묶음), I/O Std = <b>IO 전기적 특성</b>. <b>LVCMOS33 = Low Voltage CMOS 3.3 V</b>. Basys3 의 이 핀들은 3.3 V 로 동작하므로 기본값 1.8 V 를 <b>반드시 3.3 으로</b> 바꾼다.</p>
+<div class="ok">이 표는 사용자 파일 <code>gates.xdc</code> 와 일치(9/30 확인) · Digilent 공식 <code>Basys-3-Master.xdc</code>(LED0 = U16)와도 일치</div>
+<p><b>저장</b> <span class="pg">p.30–31</span>: <kbd>Ctrl</kbd>+<kbd>S</kbd> (Save Constraints) → ◉ Create a new file, File type <b>XDC</b>, File name <code>gates</code> → Constraints 아래 <code>gates.xdc (target)</code> 가 생긴다. <b>XDC</b> = 핀 배치·클럭 같은 제약을 적는 파일(Xilinx Design Constraints).</p>
+
+<!-- ============================================================ -->
+<h2 id="s10">10. 합성 → 구현 → 비트스트림 → 보드에 올리기 <span class="pg">p.31–32</span></h2>
+<ol class="steps">
+<li><b>Run Synthesis</b> → Launch Runs 창에서 Number of jobs(동시에 쓸 CPU 수) 고르고 OK. 오른쪽 위 <code>Running synth_design</code> → <code>Synthesis Complete ✓</code></li>
+<li>Synthesis Completed 창에서 ◉ <b>Run Implementation</b> → OK</li>
+<li><b>Generate Bitstream</b> → <code>write_bitstream Complete</code></li>
+<li><b>Open Hardware Manager → Open Target</b>(Auto Connect) → Hardware 창에 <code>xc7a35t_0</code> 가 Not programmed 로 보임 <span class="pg">p.32</span></li>
+<li><b>Program device</b> → Bitstream file <code>…\20260930_gates.runs\impl_1\gates.bit</code> 확인 → <b>Program</b></li>
+<li>보드에서 SW0·SW1 을 움직여 LD0~LD6 이 진리표대로 켜지는지 확인</li>
+</ol>
+<div class="ok">9/30 사용자 실습 결과: Hardware 창 <code>xc7a35t_0 … Programmed</code>, <code>write_bitstream Complete</code> 확인. 경고 38개는 이 실습에서는 모두 무시해도 되는 것이었다(클럭이 없는 조합논리라 생기는 타이밍·전력 경고 등).</div>
+<div class="memo">보드가 Hardware 창에 안 보이면 USB 가 안 잡힌 것: 장치 관리자에 "USB Serial Converter A/B"·"포트(COM &amp; LPT)" 가 있는지 확인(9/30 실제로 겪음).</div>
+
+<!-- ============================================================ -->
+<h2 id="s11">11. 참고: Vivado 설치 옵션 <span class="pg">p.34–38</span></h2>
+<p>교재 "8.3.1 Vivado 설치" 쪽(4~7/83). 화면은 AMD Unified Installer <b>2024.2</b>.</p>
+<div class="tw"><table>
+<tr><th>화면</th><th>고르는 것</th></tr>
+<tr><td>Welcome / Select Install Type</td><td>AMD 계정 E-mail·Password 입력, Download and Install Now</td></tr>
+<tr><td>Select Product</td><td>◉ <b>Vivado</b></td></tr>
+<tr><td>Select Edition</td><td>◉ Vivado ML Enterprise (판서 ✓)</td></tr>
+<tr><td>Customize</td><td>Devices 에서 SoCs(Zynq 등) <b>✕ 해제</b>, <b>7 Series ✓</b> (판서 "<b>Artix 7</b>" — Basys3 의 칩) · <b>Install Cable Drivers ✓</b>(보드 USB 연결용)</td></tr>
+<tr><td>License · Destination</td><td>I Agree 모두 ✓, 설치 위치 <code>C:\Xilinx</code> (화면 기준 디스크 77.38 GB 필요)</td></tr>
+</table></div>
+<p>이 노트북은 이미 2022.2 가 설치돼 있고 Artix-7(7 Series)과 FTDI 케이블 드라이버가 들어 있는 것을 확인했다 — 다시 설치할 필요 없다.</p>
+
+</div>
+
+<script>
+(function(){
+  var list = document.getElementById('sideList'), links = [], curUl = null;
+  document.querySelectorAll('.wrap h2, .wrap h3').forEach(function(el, i){
+    if (!el.id) el.id = 'h' + i;
+    var li = document.createElement('li'), a = document.createElement('a');
+    a.textContent = el.textContent.replace(/p\.[\d–, ]+$/, '').trim(); a.href = '#' + el.id; li.appendChild(a);
+    if (el.tagName === 'H2') { li.className = 'sec'; curUl = document.createElement('ul'); li.appendChild(curUl); list.appendChild(li); }
+    else { li.className = 'q'; (curUl || list).appendChild(li); }
+    links.push({el: el, a: a});
+  });
+  function spy(){
+    var y = window.scrollY + 80, cur = null;
+    for (var i = 0; i < links.length; i++) { if (links[i].el.offsetTop <= y) cur = links[i]; }
+    links.forEach(function(l){ l.a.classList.toggle('on', l === cur); });
+  }
+  window.addEventListener('scroll', spy, {passive: true}); spy();
+  var side = document.getElementById('side'), btn = document.getElementById('sideToggle');
+  btn.addEventListener('click', function(){
+    var closed = side.classList.toggle('closed');
+    btn.textContent = closed ? '펼치기' : '접기';
+    btn.setAttribute('aria-expanded', String(!closed));
+  });
+})();
+</script>

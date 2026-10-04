@@ -1,0 +1,14 @@
+idle_w(camera open, no inference) 2.12
+ssdlite320_mbv3_fp32.tflite      9.3MB in320 fp32 invoke   20.1ms fps  30.0 W 5.86 (dyn 3.74) mJ/inf  124.6 cpu 62.7% temp 54.3 n=902
+ssdlite320_mbv3_int8.tflite      3.1MB in320 int8 invoke    9.3ms fps  30.1 W 3.03 (dyn 0.92) mJ/inf   30.5 cpu 26.1% temp 52.1 n=902
+yolo11n_fp32.tflite             10.6MB in320 fp32 invoke   23.8ms fps  30.1 W 6.52 (dyn 4.40) mJ/inf  146.5 cpu 72.8% temp 58.2 n=902
+yolo11n_int8.tflite              3.0MB in320 fp32 invoke    9.6ms fps  30.1 W 2.94 (dyn 0.82) mJ/inf   27.4 cpu 26.0% temp 53.8 n=902
+yolov26n_fp32.tflite             9.7MB in320 fp32 invoke   22.6ms fps  30.0 W 6.13 (dyn 4.02) mJ/inf  133.7 cpu 67.2% temp 58.7 n=902
+yolov26n_int8.tflite             2.9MB in320 fp32 invoke    9.5ms fps  30.1 W 3.03 (dyn 0.91) mJ/inf   30.4 cpu 22.9% temp 53.2 n=902
+yolo8vn_fp32.tflite             12.2MB in320 fp32 invoke   24.7ms fps  30.0 W 6.76 (dyn 4.64) mJ/inf  154.5 cpu 75.2% temp 60.4 n=902
+yolo8vn_int8.tflite              3.3MB in320 fp32 invoke    8.7ms fps  30.1 W 2.91 (dyn 0.79) mJ/inf   26.4 cpu 27.8% temp 53.2 n=903
+yolo10n_fp32.tflite              9.3MB in320 fp32 invoke   24.4ms fps  30.1 W 6.67 (dyn 4.56) mJ/inf  151.6 cpu 73.8% temp 60.4 n=902
+yolo10n_int8.tflite              2.7MB in320 fp32 invoke   10.1ms fps  30.1 W 2.98 (dyn 0.87) mJ/inf   28.8 cpu 28.7% temp 54.9 n=903
+saved bench_power_5model.csv
+restored: exposure_dynamic_framerate: 1
+

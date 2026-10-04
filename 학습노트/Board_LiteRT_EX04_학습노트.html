@@ -1,0 +1,429 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>보드 LiteRT 추론 학습노트 — EX_04 코드 한 줄씩</title>
+<style>
+:root{--navy:#0d1b3e;--navy2:#345;--ink:#1c2434;--muted:#5b647a;--paper:#f6f7fb;--card:#fff;--line:#e3e7f0;--red:#e8332a;--blue:#1769d6;--blue-soft:#eaf2fe;--amber:#b9810b;--amber-soft:#fdf3df;--gray-soft:#f1f3f8;--green:#1f7a4d;--green-soft:#e7f6ee;--term:#14171f;--term-ink:#d6dbe6;}
+@media (prefers-color-scheme:dark){:root{--navy:#c9d6f5;--navy2:#93a6d6;--ink:#e7eaf1;--muted:#9aa4bb;--paper:#12141a;--card:#1b1e26;--line:#2c313c;--blue-soft:#16243a;--amber-soft:#332a12;--gray-soft:#20242e;--green-soft:#12291d;--term:#0b0d12;--term-ink:#d6dbe6;}}
+*{box-sizing:border-box}
+body{font-family:'Apple SD Gothic Neo','Pretendard','Malgun Gothic',-apple-system,sans-serif;background:var(--paper);color:var(--ink);margin:0;line-height:1.62;font-size:15px}
+.top{background:var(--navy);color:#fff;padding:20px 0}
+@media (prefers-color-scheme:dark){.top{background:#0b0d12}}
+.top-in{max-width:1180px;margin:0 auto;padding:0 22px}
+.brand{font-size:12px;letter-spacing:.04em;opacity:.85;font-weight:800}
+.brand .dot{display:inline-block;width:8px;height:8px;background:var(--red);border-radius:50%;margin-right:6px}
+.top h1{font-size:21px;margin:6px 0 4px;color:#fff}
+.top .sub{font-size:13px;opacity:.82}
+.top .meta{margin-top:9px;display:flex;gap:7px;flex-wrap:wrap}
+.tag{font-size:11px;background:rgba(255,255,255,.13);border-radius:99px;padding:2px 10px}
+.tag.warn{background:var(--red)}
+.layout{max-width:1180px;margin:0 auto;padding:0 22px;display:grid;grid-template-columns:230px 1fr;gap:26px}
+@media (max-width:860px){.layout{grid-template-columns:1fr}.toc{display:none}}
+.toc{position:sticky;top:16px;margin-top:24px;max-height:calc(100vh - 32px);overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 12px;align-self:start}
+.toc h4{margin:6px 0 6px;font-size:11px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.toc-list{list-style:none;margin:0 0 4px;padding:0;font-size:13px}
+.toc-list li{margin:0}
+.toc-list a{display:flex;gap:8px;align-items:flex-start;color:var(--ink);text-decoration:none;padding:5px 6px;border-radius:8px}
+.toc-list a:hover{background:var(--gray-soft)}
+.toc-n{display:inline-flex;width:19px;height:19px;flex:0 0 19px;align-items:center;justify-content:center;background:var(--red);color:#fff;border-radius:6px;font-size:11px;font-weight:800;margin-top:2px}
+.toc-n.start{background:var(--blue)}
+.toc-n.gray{background:var(--navy2)}
+.main{margin-top:20px;padding-bottom:80px;min-width:0}
+h2{font-size:18px;color:var(--navy);margin:34px 0 8px;border-bottom:2px solid var(--line);padding-bottom:5px;scroll-margin-top:14px}
+h2:first-child{margin-top:4px}
+h3{font-size:15px;color:var(--navy);margin:20px 0 6px}
+.qa{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--blue);border-radius:0 10px 10px 0;padding:10px 16px;margin:10px 0}
+.qa .q{font-weight:800;margin-bottom:4px}
+.qa .q::before{content:"Q. ";color:var(--blue)}
+table{border-collapse:collapse;width:100%;margin:8px 0;font-size:13.5px}
+th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+th{background:var(--gray-soft);white-space:nowrap}
+.tbl{overflow-x:auto}
+td.ln{white-space:nowrap;font-family:Consolas,'D2Coding',monospace;font-size:12.5px;background:var(--gray-soft)}
+b{color:var(--navy)}
+.memo{background:var(--amber-soft);border-radius:8px;padding:8px 12px;margin:8px 0;font-size:13.5px}
+.memo::before{content:"🔑 비유  ";font-weight:800;color:var(--amber)}
+.warn{background:#fdeceb;border-radius:8px;padding:8px 12px;margin:8px 0;font-size:13.5px}
+@media (prefers-color-scheme:dark){.warn{background:#3a1c1a}}
+.warn::before{content:"⚠ 주의  ";font-weight:800;color:var(--red)}
+.ok{background:var(--green-soft);border-radius:8px;padding:8px 12px;margin:8px 0;font-size:13.5px}
+.ok::before{content:"✅ 한 줄  ";font-weight:800;color:var(--green)}
+.todo{background:var(--blue-soft);border-radius:8px;padding:8px 12px;margin:8px 0;font-size:13.5px}
+.todo::before{content:"👉 직접 해보기  ";font-weight:800;color:var(--blue)}
+code{background:var(--gray-soft);padding:1px 5px;border-radius:4px;font-size:13px;font-family:Consolas,'D2Coding',monospace}
+pre{background:var(--term);color:var(--term-ink);border-radius:10px;padding:12px 14px;overflow-x:auto;font-size:13px;line-height:1.55;font-family:Consolas,'D2Coding',monospace;margin:8px 0}
+pre code{background:none;padding:0;color:inherit;font-size:inherit}
+pre .c{color:#8b93a7}
+pre .g{color:#7ed49a}
+pre .r{color:#ff8a80}
+.step{display:flex;gap:10px;margin:8px 0;align-items:flex-start}
+.step .n{flex:0 0 26px;height:26px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px}
+@media (prefers-color-scheme:dark){.step .n{background:#345;color:#fff}}
+.step div{flex:1}
+.check{list-style:none;padding:0;margin:8px 0}
+.check li{padding:5px 0 5px 28px;position:relative}
+.check li::before{content:"☐";position:absolute;left:4px;top:4px;color:var(--muted)}
+.backtop{position:fixed;right:18px;bottom:18px;background:var(--navy);color:#fff;border-radius:99px;padding:8px 14px;font-size:12px;text-decoration:none;opacity:.9}
+.small{font-size:12.5px;color:var(--muted)}
+.kbd{display:inline-block;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 6px;font-size:12px;background:var(--card)}
+.fig{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;margin:10px 0}
+.fig img{max-width:100%;display:block;margin:0 auto;border-radius:6px}
+.fig .cap{font-size:12.5px;color:var(--muted);margin-top:6px;text-align:center}
+.samples{display:flex;gap:14px;flex-wrap:wrap;margin:8px 0}
+.samples .s{flex:0 0 160px;text-align:center;font-size:12.5px}
+.samples .s img{width:150px;height:150px;border-radius:8px;border:1px solid var(--line)}
+.flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0;font-size:13px}
+.flow span{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:4px 9px}
+.flow i{color:var(--muted);font-style:normal}
+</style></head><body>
+<header class="top"><div class="top-in">
+<div class="brand"><span class="dot"></span> AI 시스템반도체 설계 (2기) · 개인 학습노트</div>
+<h1>보드 LiteRT 추론 학습노트 — EX_04 코드 한 줄씩</h1>
+<div class="sub">Claude Code와 대화하며 정리한 내용 · 라즈베리파이에서 .tflite 모델로 웹캠 가위바위보를 판정하는 코드 78줄 전부 풀이 · 비전공자 눈높이</div>
+<div class="meta"><span class="tag warn">개인 학습용</span><span class="tag">최초 작성 2026-09-15</span><span class="tag">실습: EX_04_Board_RPS_MobileNetV2.py (+ EX_05·EX_07 차이)</span><span class="tag">환경: 라즈베리파이5 보드 6번, MobaXterm SSH, USB 웹캠</span><span class="tag">노트 위치: 학습노트/</span></div>
+</div></header>
+
+<div class="layout">
+<nav class="toc">
+<h4>시작</h4>
+<ul class="toc-list">
+<li><a href="#s0"><span class="toc-n start">0</span>지금 내 상태</a></li>
+<li><a href="#s1"><span class="toc-n start">1</span>이 실습이 뭐야</a></li>
+<li><a href="#s2"><span class="toc-n start">2</span>단어 사전 (먼저 읽기)</a></li>
+<li><a href="#s3"><span class="toc-n start">3</span>큰 그림: 프로그램 흐름</a></li>
+</ul>
+<h4>코드 한 줄씩</h4>
+<ul class="toc-list">
+<li><a href="#s4"><span class="toc-n">4</span>모듈 로딩 (1~5줄)</a></li>
+<li><a href="#s5"><span class="toc-n">5</span>모델 로딩·정보 (7~18줄)</a></li>
+<li><a href="#s6"><span class="toc-n">6</span>판정표와 상수 (20~22줄)</a></li>
+<li><a href="#s7"><span class="toc-n">7</span>processImage 함수 (24~44줄)</a></li>
+<li><a href="#s8"><span class="toc-n">8</span>카메라 설정 (46~50줄)</a></li>
+<li><a href="#s9"><span class="toc-n">9</span>창 설정 (52~54줄)</a></li>
+<li><a href="#s10"><span class="toc-n">10</span>메인 루프 (56~75줄)</a></li>
+<li><a href="#s11"><span class="toc-n">11</span>정리 (77~78줄)</a></li>
+</ul>
+<h4>결과와 참고</h4>
+<ul class="toc-list">
+<li><a href="#s12"><span class="toc-n gray">12</span>실행 방법과 출력 읽기</a></li>
+<li><a href="#s13"><span class="toc-n gray">13</span>Colab 코드와 대응표</a></li>
+<li><a href="#s14"><span class="toc-n gray">14</span>EX_05가 더한 것</a></li>
+<li><a href="#s15"><span class="toc-n gray">15</span>EX_07은 한 줄 차이</a></li>
+<li><a href="#s16"><span class="toc-n gray">16</span>직접 해보기 (실험)</a></li>
+<li><a href="#s17"><span class="toc-n gray">17</span>복습 체크리스트</a></li>
+</ul>
+</nav>
+
+<main class="main">
+
+<h2 id="s0">0. 지금 내 상태 (2026-09-15 기준)</h2>
+<div class="tbl"><table>
+<tr><th>항목</th><th>상태</th></tr>
+<tr><td>파일 (PC 원본)</td><td><code>Lec_python\2\On-DeviceAI라즈베리파이5_Lab_[64-302-01]\02.examples(Board)\examples\03_CNN_Based_On-Device_AI\EX_04_Board_RPS_MobileNetV2.py</code></td></tr>
+<tr><td>파일 (보드)</td><td><code>/home/willtek/work/examples/03_CNN_Based_On-Device_AI/EX_04_Board_RPS_MobileNetV2.py</code>. 어제 MobaXterm으로 <code>examples</code> 폴더째 넣은 것</td></tr>
+<tr><td>모델 파일</td><td>같은 폴더의 <code>RPS_MobileNetV2.tflite</code> (9,516,932바이트). EX_03 노트북 마지막 셀이 찍은 숫자와 정확히 같다 = 강사님이 그 노트북으로 만든 파일</td></tr>
+<tr><td>실행 환경</td><td>보드 6번(10.10.15.61), MobaXterm SSH, <code>~/work/env</code> 가상환경, USB 웹캠. 결과 창은 X11로 PC 화면에 뜸</td></tr>
+<tr><td>앞 단계</td><td>EX_02(보드 웹캠 얼굴 검출) 성공, 14~27 FPS. EX_03(Colab 학습) 완료</td></tr>
+</table></div>
+<div class="ok">이 노트는 <b>78줄짜리 파이썬 파일을 위에서 아래로 한 줄씩</b> 설명한다. 노트북이 아니라 <code>.py</code> 파일이라 셀 대신 <b>줄 번호</b>로 나눴다.</div>
+
+<h2 id="s1">1. 이 실습이 뭐야</h2>
+<div class="qa"><div class="q">한 줄로 뭘 하는 거야?</div>
+<div>Colab에서 만든 <code>RPS_MobileNetV2.tflite</code>를 라즈베리파이에 올려서, <b>웹캠 영상을 실시간으로 가위/바위/보로 판정</b>하는 프로그램이다. 학습은 없고 <b>추론(inference)만</b> 한다. 추론은 "학습 끝난 모델에 새 사진을 넣어 답을 받는 것"이다.</div>
+<div class="memo">EX_03은 요리사를 교육시키는 과정(2분, GPU 필요), EX_04는 교육받은 요리사가 주문(사진)을 받아 요리(판정)를 내놓는 과정(초당 10~20번, 라즈베리파이 CPU로 충분).</div></div>
+
+<div class="qa"><div class="q">LiteRT가 뭐고 왜 따로 있어?</div>
+<div>구글의 경량 실행기. 옛 이름 TensorFlow Lite. Colab에서 쓴 TensorFlow는 학습까지 하는 큰 프로그램(수백 MB)이라 라즈베리파이엔 무겁다. LiteRT는 <b>실행만</b> 하는 작은 프로그램이고, 모델도 그에 맞춘 <code>.tflite</code> 형식을 쓴다. 파이썬에서는 <code>ai_edge_litert</code>라는 이름으로 불러온다. 보드의 <code>install</code> 폴더에 있던 <code>tflite_runtime</code>은 같은 것의 옛 이름이다.</div></div>
+
+<div class="qa"><div class="q">EX_02(얼굴 검출)랑 뭐가 달라?</div>
+<div>카메라 열기 → 반복해서 사진 찍기 → 처리 → 화면 표시 → q로 종료, 이 골격은 <b>완전히 같다</b>. 46~78줄은 EX_02와 한 글자도 다르지 않다. 다른 건 가운데 "처리" 부분뿐. EX_02는 OpenCV 내장 얼굴 검출기를 썼고, EX_04는 <b>내가 만든 tflite 모델</b>을 쓴다. 그래서 새로 배우는 줄은 7~44줄이다.</div></div>
+
+<h2 id="s2">2. 단어 사전 (먼저 읽기)</h2>
+<div class="tbl"><table>
+<tr><th>단어</th><th>한 줄 뜻</th><th>비유</th></tr>
+<tr><td><b>추론</b> (inference)</td><td>학습 끝난 모델에 새 데이터를 넣어 답을 받는 것. Colab의 <code>model.predict</code>가 하던 일</td><td>시험 보기 (공부 아님)</td></tr>
+<tr><td><b>Interpreter</b></td><td>LiteRT에서 .tflite 모델을 읽고 실행해 주는 객체. Keras의 <code>model</code>에 해당</td><td>재생기</td></tr>
+<tr><td><b>tensor</b> (텐서)</td><td>모델 안을 흐르는 숫자 배열. 입력 텐서 = 사진, 출력 텐서 = 확률 3개. numpy 배열과 같은 것이라고 봐도 된다</td><td>컨베이어 위 상자</td></tr>
+<tr><td><b>allocate_tensors</b></td><td>텐서들이 쓸 메모리를 미리 잡아 두는 것. 모델 로딩 뒤 한 번만</td><td>작업대 펼치기</td></tr>
+<tr><td><b>input_details / output_details</b></td><td>입력·출력 텐서의 정보 목록(이름, 번호, 모양, 자료형). 딕셔너리가 든 리스트</td><td>투입구·배출구 설명서</td></tr>
+<tr><td><b>index</b></td><td>텐서의 번호표. <code>set_tensor</code>, <code>get_tensor</code>에 "몇 번 텐서"인지 알려줄 때 쓴다</td><td>사물함 번호</td></tr>
+<tr><td><b>dtype</b></td><td>자료형. 이 모델은 <code>float32</code>(실수). INT8 양자화 모델이면 <code>int8</code>(정수)</td><td>상자에 담을 수 있는 물건 종류</td></tr>
+<tr><td><b>set_tensor → invoke → get_tensor</b></td><td>LiteRT 추론 3단계: 입력 넣기 → 실행 → 출력 꺼내기. Keras <code>predict</code> 한 줄이 이 셋으로 풀린 것</td><td>재료 넣기 → 버튼 → 꺼내기</td></tr>
+<tr><td><b>expand_dims</b></td><td>배열 앞에 차원 하나 추가. (224,224,3) → (1,224,224,3). 모델은 항상 "여러 장 묶음"을 받기 때문에 1장짜리 묶음으로 만든다</td><td>사진 한 장을 봉투에 넣기</td></tr>
+<tr><td><b>argmax</b></td><td>배열에서 가장 큰 값의 위치 번호. [0.1, 0.8, 0.1] → 1</td><td>1등 번호 뽑기</td></tr>
+<tr><td><b>VideoCapture</b></td><td>OpenCV의 카메라 객체. <code>read()</code>로 사진 한 장씩 꺼낸다</td><td>카메라 리모컨</td></tr>
+<tr><td><b>frame</b> (프레임)</td><td>영상의 한 장. 여기선 (240, 320, 3) 배열</td><td>필름 한 컷</td></tr>
+<tr><td><b>BGR / RGB</b></td><td>색 순서. OpenCV는 파랑-초록-빨강, 모델은 빨강-초록-파랑으로 학습됨</td><td>같은 색을 다른 순서로 적은 것</td></tr>
+<tr><td><b>putText, rectangle</b></td><td>사진 위에 글자·사각형 그리기</td><td>사진에 펜으로 쓰기</td></tr>
+<tr><td><b>waitKey</b></td><td>키 입력을 잠깐 기다리는 함수. 창을 갱신하는 역할도 겸함</td><td>잠깐 숨 고르기</td></tr>
+<tr><td><b>FPS</b></td><td>초당 프레임 수. 1초에 몇 장을 처리하나</td><td>초당 처리 건수</td></tr>
+</table></div>
+
+<h2 id="s3">3. 큰 그림: 프로그램 흐름</h2>
+<div>파일은 크게 <b>준비(한 번)</b>와 <b>반복(끝날 때까지)</b> 두 부분이다.</div>
+<div class="flow"><span>모듈</span><i>→</i><span>모델 로딩</span><i>→</i><span>정보 읽기</span><i>→</i><span>판정표</span><i>→</i><span>함수 정의</span><i>→</i><span>카메라 열기</span><i>→</i><span>창 만들기</span><i>→</i><span><b>[반복] 찍기 → 판정 → FPS → 표시 → q?</b></span><i>→</i><span>정리</span></div>
+<div class="tbl"><table>
+<tr><th>줄</th><th>구간</th><th>하는 일</th><th>몇 번</th></tr>
+<tr><td>1~5</td><td>모듈</td><td>LiteRT, numpy, time, OpenCV</td><td>1회</td></tr>
+<tr><td>7~18</td><td>모델</td><td>.tflite 읽고 입력·출력 정보 확인</td><td>1회</td></tr>
+<tr><td>20~22</td><td>상수</td><td>번호→이름 표, 색, 크기</td><td>1회</td></tr>
+<tr><td>24~44</td><td>함수</td><td>사진 한 장 판정해서 글자 쓰기 (정의만)</td><td>정의 1회, 호출은 매 프레임</td></tr>
+<tr><td>46~54</td><td>카메라·창</td><td>320×240 카메라, 결과 창</td><td>1회</td></tr>
+<tr><td>56~75</td><td><b>메인 루프</b></td><td>찍기 → processImage → FPS → 표시 → q 확인</td><td>초당 10~20회</td></tr>
+<tr><td>77~78</td><td>정리</td><td>카메라·창 닫기</td><td>1회</td></tr>
+</table></div>
+
+<h2 id="s4">4. 모듈 로딩 (1~5줄)</h2>
+<pre><code>1  # 모듈 로딩
+2  from ai_edge_litert.interpreter import Interpreter
+3  import numpy as np
+4  import time
+5  import cv2</code></pre>
+<div class="tbl"><table>
+<tr><th>줄</th><th>뜻</th></tr>
+<tr><td class="ln">2 from ai_edge_litert.interpreter import Interpreter</td><td><b>새것.</b> LiteRT 패키지에서 모델 실행기 <code>Interpreter</code> 하나만 꺼낸다. Colab의 <code>import tensorflow</code>에 해당하지만 훨씬 가볍다. 보드 <code>env</code>에 미리 설치돼 있다.</td></tr>
+<tr><td class="ln">3 import numpy as np</td><td>배열. 사진과 모델 출력을 다룬다.</td></tr>
+<tr><td class="ln">4 import time</td><td>시계. FPS 계산에 쓴다.</td></tr>
+<tr><td class="ln">5 import cv2</td><td>OpenCV. 카메라, 색 변환, 크기 조절, 화면 표시.</td></tr>
+</table></div>
+<div class="small">Colab에서 쓰던 tensorflow, matplotlib, glob, sklearn은 없다. 학습·그래프·파일 목록·데이터 나누기가 전부 필요 없기 때문이다.</div>
+
+<h2 id="s5">5. 모델 로딩과 정보 얻기 (7~18줄)</h2>
+<pre><code>7   # LiteRT 모델 로딩
+8   modelPath = 'RPS_MobileNetV2.tflite'
+9   interpreter = Interpreter(model_path = modelPath) # 모델 로딩
+10  interpreter.allocate_tensors() # tensor 할당
+11  input_details = interpreter.get_input_details() # input tensor 정보 얻기
+12  output_details = interpreter.get_output_details() # output tensor 정보 얻기
+13  input_dtype = input_details[0]['dtype']
+14  height = input_details[0]['shape'][1]
+15  width = input_details[0]['shape'][2]
+16  print('model input shape:', (height, width))
+17  print(input_details)
+18  print(output_details)</code></pre>
+<div class="tbl"><table>
+<tr><th>줄</th><th>뜻</th></tr>
+<tr><td class="ln">8 modelPath = 'RPS_MobileNetV2.tflite'</td><td>모델 파일 이름. 폴더 없이 이름만이라 <b>이 .py와 같은 폴더</b>에서 찾는다. 그래서 실행 전에 <code>cd</code>로 그 폴더에 들어가야 한다. EX_03 노트북의 <code>tfliteFileName</code>과 같은 이름.</td></tr>
+<tr><td class="ln">9 interpreter = Interpreter(model_path = modelPath)</td><td>파일을 읽어 실행기를 만든다. Colab의 <code>load_model</code>에 해당.</td></tr>
+<tr><td class="ln">10 interpreter.allocate_tensors()</td><td>모델이 쓸 메모리를 잡는다. LiteRT는 이걸 명시적으로 해 줘야 하고, 안 하면 다음 줄들에서 에러.</td></tr>
+<tr><td class="ln">11 input_details = interpreter.get_input_details()</td><td>입력 텐서 정보. 리스트 안에 딕셔너리. 입력이 하나라 <code>[0]</code>만 쓴다.</td></tr>
+<tr><td class="ln">12 output_details = interpreter.get_output_details()</td><td>출력 텐서 정보. 마찬가지로 하나.</td></tr>
+<tr><td class="ln">13 input_dtype = input_details[0]['dtype']</td><td>입력 자료형. 이 모델은 <code>float32</code>. 35줄에서 사진을 이 형으로 바꿀 때 쓴다. 나중에 INT8 모델을 넣으면 여기가 <code>int8</code>로 바뀌고 코드는 그대로 동작한다. 자료형을 하드코딩하지 않은 이유.</td></tr>
+<tr><td class="ln">14 height = input_details[0]['shape'][1]</td><td>입력 모양 <code>[1, 224, 224, 3]</code>의 두 번째 = 세로 224.</td></tr>
+<tr><td class="ln">15 width = input_details[0]['shape'][2]</td><td>세 번째 = 가로 224.</td></tr>
+<tr><td class="ln">16 print('model input shape:', (height, width))</td><td>확인용 출력. <code>(224, 224)</code>가 찍히면 EX_03에서 만든 모델이 맞다. 어제 <code>sample_01</code>도 같은 줄이 있었다.</td></tr>
+<tr><td class="ln">17~18 print(input_details) / print(output_details)</td><td>정보 전체를 찍는다. 길고 어지럽지만 <code>'shape': [1, 224, 224, 3]</code>, <code>'dtype': float32</code>, 출력 <code>'shape': [1, 3]</code>만 보면 된다. EX_05에서는 주석 처리돼 있다.</td></tr>
+</table></div>
+<div class="qa"><div class="q">14~15줄에서 읽은 height, width는 어디에 써?</div>
+<div>사실 이 파일에서는 16줄 출력에만 쓰고 끝이다. 30줄은 <code>IMG_SIZE</code>(22줄에서 224로 고정)를 쓴다. 모델에서 읽은 값을 쓰는 게 더 안전하지만, 강사 코드는 두 값이 같다는 걸 알고 상수를 쓴 것. 실험 16번에 이걸 고쳐 보는 항목을 넣었다.</div></div>
+
+<h2 id="s6">6. 판정표와 상수 (20~22줄)</h2>
+<pre><code>20  ansToText = {0:'scissors', 1:'rock', 2:'paper'}
+21  colorList = [(255,0,0),(0,255,0),(0,0,255)]
+22  IMG_SIZE = 224</code></pre>
+<div class="tbl"><table>
+<tr><th>줄</th><th>뜻</th></tr>
+<tr><td class="ln">20 ansToText = {0:'scissors', 1:'rock', 2:'paper'}</td><td>번호 → 이름 딕셔너리. <b>EX_03의 폴더 번호(0/1/2 = 가위/바위/보)와 반드시 같아야 한다.</b> 학습 때 0번 폴더가 가위였으니 모델의 0번 출력이 가위다. 여기가 어긋나면 모델은 맞게 판정해도 화면 글자가 틀린다.</td></tr>
+<tr><td class="ln">21 colorList = [(255,0,0),(0,255,0),(0,0,255)]</td><td>번호별 글자 색. OpenCV는 BGR이라 <code>(255,0,0)</code>은 <b>파랑</b>, <code>(0,255,0)</code> 초록, <code>(0,0,255)</code> 빨강. 가위=파랑, 바위=초록, 보=빨강.</td></tr>
+<tr><td class="ln">22 IMG_SIZE = 224</td><td>모델 입력 크기. EX_03 노트북의 <code>IMG_SIZE = 224</code>와 같은 값이어야 한다.</td></tr>
+</table></div>
+
+<h2 id="s7">7. processImage 함수 (24~44줄)</h2>
+<div>이 파일의 핵심. 사진 한 장을 받아 판정하고, 결과 글자를 사진 위에 쓴다. 메인 루프가 매 프레임 이 함수를 부른다.</div>
+<pre><code>24  def processImage(frame):
+25      # BGR을 RGB로 변경
+26      img = cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)
+27
+28      # 모델의 입력 형태로 수정: (1,224,224,3)
+29      # Normalization 처리 안함 (모델 내에서 -1 ~ 1로 변환 처리함)
+30      img = cv2.resize(frame, (IMG_SIZE, IMG_SIZE))
+31      img = np.expand_dims(img, 0)
+32
+33      # 모델에 입력하여 결과 얻기
+34      #   input tensor 설정
+35      interpreter.set_tensor(input_details[0]['index'], img.astype(input_dtype))
+36      #   모델 실행
+37      interpreter.invoke()
+38      #   output tensor 얻기
+39      output_data = interpreter.get_tensor(output_details[0]['index'])[0]
+40      ans = np.argmax(output_data)
+41      text = ansToText[ans]
+42
+43      # 판정 결과 표시
+44      cv2.putText(frame,text,(180,50),cv2.FONT_HERSHEY_PLAIN,2,colorList[ans],2)</code></pre>
+<div class="tbl"><table>
+<tr><th>줄</th><th>뜻</th></tr>
+<tr><td class="ln">24 def processImage(frame):</td><td>함수 정의. <code>frame</code>은 카메라에서 온 (240, 320, 3) 사진. 반환값은 없고, <code>frame</code> 위에 글자를 직접 쓴다(같은 메모리를 가리키므로 밖에서도 보인다).</td></tr>
+<tr><td class="ln">26 img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)</td><td>BGR → RGB. 모델이 RGB로 학습됐기 때문(EX_03 7번 셀에서 <code>COLOR_BGR2RGB</code>를 했다). 결과를 <code>img</code>에 담는다.</td></tr>
+<tr><td class="ln">30 img = cv2.resize(frame, (IMG_SIZE, IMG_SIZE))</td><td>320×240 사진을 224×224로. 가로세로 비율이 안 맞아 약간 찌그러지지만 학습 때도 같은 방식이었다. <b>주의: 여기서 <code>img</code>가 아니라 <code>frame</code>을 넣었다.</b> 아래 설명 참고.</td></tr>
+<tr><td class="ln">31 img = np.expand_dims(img, 0)</td><td>(224, 224, 3) → (1, 224, 224, 3). 모델은 "N장 묶음"을 받으므로 1장짜리 묶음으로. Colab에서는 <code>test_data</code>가 원래 (545, 224, 224, 3)이라 필요 없었다.</td></tr>
+<tr><td class="ln">35 interpreter.set_tensor(input_details[0]['index'], img.astype(input_dtype))</td><td><b>추론 1단계: 입력 넣기.</b> 입력 텐서 번호(<code>index</code>)에 사진을 넣는다. <code>astype(input_dtype)</code>은 카메라 사진(uint8, 0~255 정수)을 모델 자료형(float32)으로 바꾸는 것. 값은 그대로 0~255. -1~1 변환은 모델 안의 <code>preprocess_input</code>이 한다(29줄 주석).</td></tr>
+<tr><td class="ln">37 interpreter.invoke()</td><td><b>추론 2단계: 실행.</b> MobileNetV2 전체를 한 번 계산한다. 이 한 줄이 시간의 대부분을 먹는다. 라즈베리파이 CPU로 수십 ms.</td></tr>
+<tr><td class="ln">39 output_data = interpreter.get_tensor(output_details[0]['index'])[0]</td><td><b>추론 3단계: 출력 꺼내기.</b> 출력 텐서는 (1, 3). <code>[0]</code>으로 묶음을 벗겨 (3,) = [가위 확률, 바위 확률, 보 확률]. 셋의 합은 1(softmax).</td></tr>
+<tr><td class="ln">40 ans = np.argmax(output_data)</td><td>제일 큰 확률의 번호. 0, 1, 2 중 하나.</td></tr>
+<tr><td class="ln">41 text = ansToText[ans]</td><td>번호를 이름으로. 'scissors' 등.</td></tr>
+<tr><td class="ln">44 cv2.putText(frame, text, (180,50), cv2.FONT_HERSHEY_PLAIN, 2, colorList[ans], 2)</td><td>원본 <code>frame</code>의 (x=180, y=50) 위치에 글자를 쓴다. 인자 순서: 사진, 글자, 위치, 글꼴, 크기 2배, 색(번호별), 굵기 2. FPS는 (20,50)에 쓰이니 같은 줄 오른쪽에 나란히 보인다.</td></tr>
+</table></div>
+<div class="warn"><b>30줄의 실수.</b> 26줄에서 RGB로 바꾼 결과를 <code>img</code>에 담아 놓고, 30줄에서 크기를 줄일 때 <code>img</code>가 아니라 원본 <code>frame</code>을 넣었다. 그래서 26줄은 헛수고가 되고 <b>모델에는 BGR 사진이 들어간다.</b> 학습은 RGB로 했으니 빨강과 파랑이 뒤집힌 사진을 보는 셈이다. 손은 살색이라 큰 영향은 없을 수 있지만, 인식률이 떨어지는 원인 중 하나일 수 있다. EX_05에서는 <code>cvtColor(img, …)</code>로 순서가 바로잡혀 있다. 고치려면 30줄의 <code>frame</code>을 <code>img</code>로 바꾸면 된다.</div>
+<div class="qa"><div class="q">왜 Colab에서는 predict 한 줄이었는데 여기선 세 줄이야?</div>
+<div>Keras의 <code>model.predict(x)</code>는 "넣고 → 돌리고 → 꺼내기"를 안에서 다 해 주는 포장이다. LiteRT는 작게 만들려고 포장을 벗겨 세 동작을 따로 노출한다. 대신 입력 텐서를 미리 잡아 두고 매번 값만 갈아 끼우기 때문에 반복 실행이 빠르고 메모리도 적게 쓴다. 대학원 보고서의 NPU 코드도 같은 구조(입력 설정 → 실행 → 출력 읽기)였다.</div></div>
+
+<h2 id="s8">8. 카메라 설정 (46~50줄)</h2>
+<pre><code>46  # 카메라 설정
+47  cap = cv2.VideoCapture(0) # 0번 카메라 열기
+48  cap.set(cv2.CAP_PROP_FRAME_WIDTH,320)
+49  cap.set(cv2.CAP_PROP_FRAME_HEIGHT,240)
+50  cap.set(cv2.CAP_PROP_BUFFERSIZE,1)</code></pre>
+<div class="tbl"><table>
+<tr><th>줄</th><th>뜻</th></tr>
+<tr><td class="ln">47 cap = cv2.VideoCapture(0)</td><td>0번 카메라를 연다. 보드에 USB 웹캠 하나만 꽂혀 있으면 그게 0번. 안 꽂혀 있으면 열리긴 하는데 58줄에서 사진을 못 받아 바로 끝난다.</td></tr>
+<tr><td class="ln">48~49 cap.set(…FRAME_WIDTH, 320) / (…FRAME_HEIGHT, 240)</td><td>카메라 해상도를 320×240으로 낮춘다. 웹캠 기본은 640×480 이상인데, 어차피 224로 줄일 거라 작게 받아 속도를 번다.</td></tr>
+<tr><td class="ln">50 cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)</td><td>카메라 버퍼를 1장으로. 버퍼는 카메라가 미리 찍어 쌓아 두는 창고인데, 크면 처리가 느릴 때 옛날 사진이 밀려 나와 화면이 지연된다. 1이면 항상 최신 사진.</td></tr>
+</table></div>
+
+<h2 id="s9">9. 창 설정 (52~54줄)</h2>
+<pre><code>52  # 윈도우 설정
+53  cv2.namedWindow('cam', cv2.WINDOW_NORMAL)
+54  cv2.resizeWindow('cam', 320+40, 240+60)</code></pre>
+<div class="tbl"><table>
+<tr><th>줄</th><th>뜻</th></tr>
+<tr><td class="ln">53 cv2.namedWindow('cam', cv2.WINDOW_NORMAL)</td><td>'cam'이라는 이름의 창을 만든다. <code>WINDOW_NORMAL</code>은 크기 조절 가능. 이 창이 SSH의 X11 포워딩을 타고 <b>PC 화면</b>에 뜬다(어제 본 <code>cam@raspberrypi</code> 창).</td></tr>
+<tr><td class="ln">54 cv2.resizeWindow('cam', 320+40, 240+60)</td><td>창 크기 360×300. 사진보다 조금 크게 잡아 여백을 둔다.</td></tr>
+</table></div>
+
+<h2 id="s10">10. 메인 루프 (56~75줄)</h2>
+<pre><code>56  startTime = time.time()
+57  while(cap.isOpened()):
+58      ret,frame=cap.read() # 사진 찍기 -> (240,320,3)
+59      if not ret: break
+60
+61      # 이미지 처리
+62      processImage(frame)
+63
+64      # FPS 표시
+65      curTime = time.time()
+66      fps = 1/(curTime - startTime)
+67      startTime = curTime
+68      cv2.putText(frame,f'FPS: {fps:.1f}',(20, 50),cv2.FONT_HERSHEY_PLAIN,2,(0,255,255),2)
+69
+70      # 이미지 출력
+71      cv2.imshow('cam',frame)
+72
+73      # 10ms 동안 키 입력 대기
+74      key = cv2.waitKey(10)
+75      if  key == ord('q'): break</code></pre>
+<div class="tbl"><table>
+<tr><th>줄</th><th>뜻</th></tr>
+<tr><td class="ln">56 startTime = time.time()</td><td>현재 시각(초, 소수점 포함)을 기억. FPS 계산의 출발점.</td></tr>
+<tr><td class="ln">57 while(cap.isOpened()):</td><td>카메라가 열려 있는 동안 무한 반복. 아래 <code>break</code> 두 곳이 탈출구.</td></tr>
+<tr><td class="ln">58 ret, frame = cap.read()</td><td>사진 한 장 찍기. <code>ret</code>은 성공 여부(True/False), <code>frame</code>은 (240, 320, 3) 배열.</td></tr>
+<tr><td class="ln">59 if not ret: break</td><td>못 찍었으면(카메라 빠짐 등) 반복 종료.</td></tr>
+<tr><td class="ln">62 processImage(frame)</td><td>7번 절 함수 호출. 판정 후 <code>frame</code>에 글자가 써져서 돌아온다.</td></tr>
+<tr><td class="ln">65~67 curTime, fps, startTime</td><td>지금 시각 − 직전 프레임 시각 = 한 프레임 걸린 시간. 그 역수가 FPS. 그리고 지금 시각을 다음 계산용으로 저장. <b>순간값</b>이라 14~27처럼 흔들린다.</td></tr>
+<tr><td class="ln">68 cv2.putText(frame, f'FPS: {fps:.1f}', (20, 50), …, (0,255,255), 2)</td><td>왼쪽 위에 노란색(BGR로 0,255,255)으로 FPS 표시. <code>{fps:.1f}</code>는 소수점 한 자리.</td></tr>
+<tr><td class="ln">71 cv2.imshow('cam', frame)</td><td>'cam' 창에 사진을 띄운다. 이 시점에 화면이 바뀐다.</td></tr>
+<tr><td class="ln">74 key = cv2.waitKey(10)</td><td>10ms 동안 키를 기다린다. 이 함수가 창을 실제로 갱신하기도 해서 없으면 창이 안 그려진다. 눌린 키의 번호를 돌려주고, 안 눌렸으면 -1.</td></tr>
+<tr><td class="ln">75 if key == ord('q'): break</td><td><code>ord('q')</code>는 문자 q의 번호(113). q가 눌렸으면 반복 종료. <b>창을 클릭한 상태에서</b> 눌러야 한다. 터미널에서 누르면 안 먹는다.</td></tr>
+</table></div>
+
+<h2 id="s11">11. 정리 (77~78줄)</h2>
+<pre><code>77  cap.release() # 카메라 닫기
+78  cv2.destroyAllWindows() # 모든 창 닫기</code></pre>
+<div class="tbl"><table>
+<tr><th>줄</th><th>뜻</th></tr>
+<tr><td class="ln">77 cap.release()</td><td>카메라를 놓아준다. 안 하면 다음 프로그램이 카메라를 못 열 수 있다.</td></tr>
+<tr><td class="ln">78 cv2.destroyAllWindows()</td><td>OpenCV 창을 전부 닫는다.</td></tr>
+</table></div>
+<div class="small">터미널에서 <code>Ctrl+C</code>로 강제 종료하면 이 두 줄이 실행되지 않는다. 그래도 프로그램이 끝나면 운영체제가 정리해 주므로 큰 문제는 없지만, 창이 남아 있으면 닫아 주면 된다.</div>
+
+<h2 id="s12">12. 실행 방법과 출력 읽기</h2>
+<h3>실행</h3>
+<pre><code>cd ~/work/examples/03_CNN_Based_On-Device_AI
+source ~/work/env/bin/activate
+python EX_04_Board_RPS_MobileNetV2.py</code></pre>
+<div>보드 전원 켜고 MobaXterm 접속, USB 웹캠 꽂은 상태에서. 프롬프트에 이미 <code>(env)</code>가 있으면 둘째 줄 생략.</div>
+<h3>터미널에 찍히는 것</h3>
+<div class="tbl"><table>
+<tr><th>출력</th><th>뜻</th></tr>
+<tr><td><code>INFO: Created TensorFlow Lite XNNPACK delegate for CPU.</code></td><td>CPU 가속 모듈 붙음. 좋은 신호</td></tr>
+<tr><td><code>Error in cpuinfo: prctl(...) failed</code></td><td>라즈베리파이 CPU 정보 조회 잡음. 무시</td></tr>
+<tr><td><code>model input shape: (224, 224)</code></td><td>16줄. 모델 정상</td></tr>
+<tr><td><code>[{'name': 'input_layer', 'index': 0, 'shape': array([1, 224, 224, 3]), 'dtype': float32, …}]</code></td><td>17줄. 입력 정보. shape과 dtype만 보면 됨</td></tr>
+<tr><td><code>[{'name': 'StatefulPartitionedCall…', 'shape': array([1, 3]), 'dtype': float32, …}]</code></td><td>18줄. 출력 3개</td></tr>
+<tr><td>(그 뒤로 아무것도 안 찍힘)</td><td>정상. 창에서 돌아가는 중</td></tr>
+</table></div>
+<h3>창에 보이는 것</h3>
+<div>왼쪽 위 노란 글자 <code>FPS: 15.3</code>, 그 오른쪽에 판정 <code>scissors</code>/<code>rock</code>/<code>paper</code>가 파랑/초록/빨강으로. 박스는 없다(EX_04는 화면 전체를 판정하므로 위치 개념이 없다).</div>
+<div class="warn"><b>인식률이 낮은 게 정상이다.</b> 화면 전체(상반신, 배경 포함)를 224로 줄여 통째로 판정하는데, 학습 사진은 "회색 벽 + 손이 화면 가득"이었다. 손을 카메라 20~30cm 앞에 대서 화면을 채우고 벽을 배경으로 하면 나아진다. 어제 <code>sample_01</code>에서 겪은 것과 같은 문제이고, 이 한계를 보여주려고 EX_04가 있다. 다음 EX_05가 손만 잘라내서 개선한다.</div>
+
+<h2 id="s13">13. Colab 코드(EX_03)와 대응표</h2>
+<div>같은 일을 Colab의 Keras와 보드의 LiteRT가 어떻게 다르게 쓰는지. 이걸 알면 둘 사이를 오갈 수 있다.</div>
+<div class="tbl"><table>
+<tr><th>하는 일</th><th>Colab (Keras, EX_03)</th><th>보드 (LiteRT, EX_04)</th></tr>
+<tr><td>라이브러리</td><td><code>import tensorflow as tf</code></td><td><code>from ai_edge_litert.interpreter import Interpreter</code></td></tr>
+<tr><td>모델 열기</td><td><code>tf.keras.models.load_model('….keras')</code></td><td><code>Interpreter(model_path='….tflite')</code> + <code>allocate_tensors()</code></td></tr>
+<tr><td>입력 준비</td><td><code>test_data</code> (545, 224, 224, 3), RGB, 0~255</td><td><code>expand_dims</code>로 (1, 224, 224, 3), 0~255, <code>astype(float32)</code></td></tr>
+<tr><td>정규화</td><td>모델 안 <code>preprocess_input</code></td><td>같은 층이 tflite 안에 그대로 들어 있음</td></tr>
+<tr><td>추론</td><td><code>y_out = model.predict(x)</code></td><td><code>set_tensor</code> → <code>invoke</code> → <code>get_tensor</code></td></tr>
+<tr><td>답 고르기</td><td><code>np.argmax(y_out, axis=1)</code></td><td><code>np.argmax(output_data)</code></td></tr>
+<tr><td>번호 → 이름</td><td>그림 제목에 번호 그대로</td><td><code>ansToText[ans]</code></td></tr>
+<tr><td>결과 보기</td><td>matplotlib 그림 10장</td><td>웹캠 창에 실시간 글자</td></tr>
+</table></div>
+
+<h2 id="s14">14. EX_05가 더한 것 (손 잘라내기)</h2>
+<div><code>EX_05_Board_RPS_MobileNetV2_HD.py</code>는 EX_04에 아래를 더한 것이다. HD는 Hand Detection. 어제 돌린 <code>sample_01.py</code>가 사실상 이 파일이다.</div>
+<div class="tbl"><table>
+<tr><th>추가된 줄</th><th>뜻</th></tr>
+<tr><td class="ln">from cvzone.HandTrackingModule import HandDetector<br>hd = HandDetector(maxHands=1)</td><td>MediaPipe 기반 손 찾기 도구. 손 하나만(<code>maxHands=1</code>) 찾는다. 이게 켜지면서 터미널에 "Feedback manager…" 경고가 뜬다.</td></tr>
+<tr><td class="ln">offset = 30</td><td>손 박스를 사방 30픽셀 여유 있게 잘라내기 위한 값.</td></tr>
+<tr><td class="ln">def make_square_img(img): …</td><td>잘라낸 손(직사각형)을 224×224 정사각형으로 만드는 함수. 긴 쪽을 224에 맞춰 줄이고, 남는 부분은 <b>흰색</b>으로 채운다. 세로가 길면(portrait) 좌우에, 가로가 길면(landscape) 위아래에 흰 띠.</td></tr>
+<tr><td class="ln">hands, _ = hd.findHands(frame, draw=False)<br>if not hands: return</td><td>손을 찾는다. 못 찾으면 함수 끝 → 아무 글자도 안 씀. <b>화면에 글자가 안 뜨면 손을 못 찾은 것.</b></td></tr>
+<tr><td class="ln">x, y, w, h = hands[0]['bbox']</td><td>첫 번째 손의 박스 (왼쪽 x, 위 y, 너비, 높이).</td></tr>
+<tr><td class="ln">if x&lt;offset or y&lt;offset or x+w+offset&gt;320 or y+h&gt;240: return</td><td>박스가 화면 가장자리에 30픽셀 이내로 붙으면 건너뜀. <b>손을 화면 한가운데 두어야 하는 이유.</b></td></tr>
+<tr><td class="ln">x1, y1 = x-offset, y-offset<br>x2, y2 = x+w+offset, y+h</td><td>잘라낼 범위. 왼쪽·위·오른쪽으로 30씩 넓히고 아래는 그대로(손목 쪽).</td></tr>
+<tr><td class="ln">img = frame[y1:y2, x1:x2]</td><td>배열 슬라이싱으로 손 부분만 떼어냄.</td></tr>
+<tr><td class="ln">img = make_square_img(img)</td><td>정사각형 224로.</td></tr>
+<tr><td class="ln">img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)</td><td>EX_04의 30줄 실수가 여기선 없다. 잘라낸 <code>img</code>를 제대로 RGB로.</td></tr>
+<tr><td class="ln">cv2.rectangle(frame, (x1,y1), (x2,y2), colorList[ans], 2)<br>cv2.putText(frame, text, (x1,y1-7), …)</td><td>글자를 고정 위치(180,50) 대신 <b>박스 위</b>에 쓰고, 박스도 그린다.</td></tr>
+</table></div>
+<div class="ok">EX_04 → EX_05로 바뀐 핵심은 "화면 전체를 판정" → "<b>손을 먼저 찾고 그 부분만 판정</b>". 모델은 똑같은 <code>RPS_MobileNetV2.tflite</code>다. 모델을 안 바꾸고 <b>입력을 학습 사진과 비슷하게 만들어 주는 것</b>만으로 인식률이 오른다. 이게 전처리의 힘이다.</div>
+
+<h2 id="s15">15. EX_07은 한 줄 차이</h2>
+<pre><code>- modelPath = 'RPS_MobileNetV2.tflite'
++ modelPath = 'RPS_MobileNetV2_Augmentation.tflite'</code></pre>
+<div><code>EX_07_Board_RPS_MobileNetV2_HD_Augmentation.py</code>는 EX_05와 <b>모델 파일 이름 한 줄만</b> 다르다. 코드는 같고 모델만 EX_06 노트북(증강 학습)이 만든 것으로 바꿔 끼운다. 즉 03_CNN 장의 보드 실습 3개는 이렇게 정리된다.</div>
+<div class="tbl"><table>
+<tr><th>파일</th><th>입력 처리</th><th>모델</th><th>보여주려는 것</th></tr>
+<tr><td>EX_04</td><td>화면 전체</td><td>기본</td><td>tflite 추론 기본기. 전체 판정의 한계</td></tr>
+<tr><td>EX_05</td><td>손만 잘라냄</td><td>기본</td><td>전처리만으로 개선</td></tr>
+<tr><td>EX_07</td><td>손만 잘라냄</td><td>증강 학습</td><td>모델 쪽 개선. 배경·각도에 강해짐</td></tr>
+</table></div>
+
+<h2 id="s16">16. 직접 해보기 (실험)</h2>
+<div class="tbl"><table>
+<tr><th>바꿀 곳</th><th>어떻게</th><th>볼 것</th><th>예상</th></tr>
+<tr><td>30줄 실수 고치기</td><td><code>cv2.resize(frame, …)</code> → <code>cv2.resize(img, …)</code></td><td>인식률</td><td>모델이 RGB를 제대로 받음. 조금 나아지거나 비슷. 코드 읽기 연습으로 가치</td></tr>
+<tr><td>확률 같이 표시</td><td>41줄 뒤에 <code>text = f'{text} {output_data[ans]*100:.0f}%'</code></td><td>화면 글자</td><td>"rock 87%"처럼. 헷갈릴 때 확률이 낮은 게 보임. YOLO 예제는 원래 이렇게 표시</td></tr>
+<tr><td>내가 만든 모델로</td><td>드라이브 <code>files/save/RPS_MobileNetV2.tflite</code>를 MobaXterm으로 끌어다 같은 폴더에 덮어쓰기</td><td>동작 여부, 인식률</td><td>어제 Colab에서 학습한 내 모델로 판정. 강사님 것과 비슷해야 정상</td></tr>
+<tr><td>IMG_SIZE를 모델에서 읽기</td><td>22줄을 <code>IMG_SIZE = height</code>로</td><td>동작</td><td>같음. 모델 크기가 바뀌어도 코드 수정 불필요해지는 습관</td></tr>
+<tr><td>평균 FPS</td><td>65~67줄 대신 최근 30프레임 평균</td><td>숫자 흔들림</td><td>14~27 → 안정된 한 값. 모델 비교할 때 유용</td></tr>
+<tr><td>해상도 올리기</td><td>48~49줄을 640, 480</td><td>FPS</td><td>카메라 읽기와 resize가 무거워져 FPS 하락. 왜 320×240으로 낮췄는지 체감</td></tr>
+</table></div>
+<div class="todo">"확률 같이 표시"가 제일 쉽고 바로 쓸모 있다. MobaXterm 왼쪽 파일 목록에서 파일을 더블클릭해 수정 → 저장 → 터미널에서 다시 실행.</div>
+
+<h2 id="s17">17. 복습 체크리스트</h2>
+<ul class="check">
+<li>학습과 추론의 차이, 그리고 EX_03과 EX_04가 각각 어느 쪽인지</li>
+<li>LiteRT가 왜 따로 있고, .tflite와 .keras 중 어느 쪽이 보드로 가는지</li>
+<li><code>set_tensor → invoke → get_tensor</code> 세 줄이 Colab의 어느 한 줄에 해당하는지</li>
+<li><code>expand_dims</code>가 왜 필요한지 ((224,224,3) → (1,224,224,3))</li>
+<li><code>ansToText</code>의 번호가 어디서 정해졌는지 (EX_03 폴더 번호)</li>
+<li>왜 <code>/255</code>를 안 하는지, 그게 EX_03의 어느 줄 덕분인지</li>
+<li>30줄의 실수가 뭔지, 왜 결과에 큰 티가 안 나는지</li>
+<li>EX_04 → EX_05 → EX_07이 각각 뭘 바꿔서 인식률을 올리는지 (입력 전처리 / 모델)</li>
+<li>FPS가 왜 흔들리는지, 순간값과 평균값의 차이</li>
+</ul>
+<div class="ok">다음은 <code>EX_05_Board_RPS_MobileNetV2_HD.py</code>. 이 노트 14절이 그 파일의 추가분이라, 실행하면서 14절만 옆에 두면 된다.</div>
+
+</main>
+</div>
+<a class="backtop" href="#s0">↑ 맨 위</a>
+</body></html>

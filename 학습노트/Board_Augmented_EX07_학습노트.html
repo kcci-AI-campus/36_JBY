@@ -1,0 +1,354 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>증강 모델 보드 추론 학습노트 — EX_07 코드 한 줄씩</title>
+<style>
+:root{--navy:#0d1b3e;--navy2:#345;--ink:#1c2434;--muted:#5b647a;--paper:#f6f7fb;--card:#fff;--line:#e3e7f0;--red:#e8332a;--blue:#1769d6;--blue-soft:#eaf2fe;--amber:#b9810b;--amber-soft:#fdf3df;--gray-soft:#f1f3f8;--green:#1f7a4d;--green-soft:#e7f6ee;--term:#14171f;--term-ink:#d6dbe6;}
+@media (prefers-color-scheme:dark){:root{--navy:#c9d6f5;--navy2:#93a6d6;--ink:#e7eaf1;--muted:#9aa4bb;--paper:#12141a;--card:#1b1e26;--line:#2c313c;--blue-soft:#16243a;--amber-soft:#332a12;--gray-soft:#20242e;--green-soft:#12291d;--term:#0b0d12;--term-ink:#d6dbe6;}}
+*{box-sizing:border-box}
+body{font-family:'Apple SD Gothic Neo','Pretendard','Malgun Gothic',-apple-system,sans-serif;background:var(--paper);color:var(--ink);margin:0;line-height:1.62;font-size:15px}
+.top{background:var(--navy);color:#fff;padding:20px 0}
+@media (prefers-color-scheme:dark){.top{background:#0b0d12}}
+.top-in{max-width:1180px;margin:0 auto;padding:0 22px}
+.brand{font-size:12px;letter-spacing:.04em;opacity:.85;font-weight:800}
+.brand .dot{display:inline-block;width:8px;height:8px;background:var(--red);border-radius:50%;margin-right:6px}
+.top h1{font-size:21px;margin:6px 0 4px;color:#fff}
+.top .sub{font-size:13px;opacity:.82}
+.top .meta{margin-top:9px;display:flex;gap:7px;flex-wrap:wrap}
+.tag{font-size:11px;background:rgba(255,255,255,.13);border-radius:99px;padding:2px 10px}
+.tag.warn{background:var(--red)}
+.layout{max-width:1180px;margin:0 auto;padding:0 22px;display:grid;grid-template-columns:230px 1fr;gap:26px}
+@media (max-width:860px){.layout{grid-template-columns:1fr}.toc{display:none}}
+.toc{position:sticky;top:16px;margin-top:24px;max-height:calc(100vh - 32px);overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 12px;align-self:start}
+.toc h4{margin:6px 0 6px;font-size:11px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.toc-list{list-style:none;margin:0 0 4px;padding:0;font-size:13px}
+.toc-list li{margin:0}
+.toc-list a{display:flex;gap:8px;align-items:flex-start;color:var(--ink);text-decoration:none;padding:5px 6px;border-radius:8px}
+.toc-list a:hover{background:var(--gray-soft)}
+.toc-n{display:inline-flex;width:19px;height:19px;flex:0 0 19px;align-items:center;justify-content:center;background:var(--red);color:#fff;border-radius:6px;font-size:11px;font-weight:800;margin-top:2px}
+.toc-n.start{background:var(--blue)}
+.toc-n.gray{background:var(--navy2)}
+.main{margin-top:20px;padding-bottom:80px;min-width:0}
+h2{font-size:18px;color:var(--navy);margin:34px 0 8px;border-bottom:2px solid var(--line);padding-bottom:5px;scroll-margin-top:14px}
+h2:first-child{margin-top:4px}
+h3{font-size:15px;color:var(--navy);margin:20px 0 6px}
+.qa{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--blue);border-radius:0 10px 10px 0;padding:10px 16px;margin:10px 0}
+.qa .q{font-weight:800;margin-bottom:4px}
+.qa .q::before{content:"Q. ";color:var(--blue)}
+table{border-collapse:collapse;width:100%;margin:8px 0;font-size:13.5px}
+th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+th{background:var(--gray-soft);white-space:nowrap}
+.tbl{overflow-x:auto}
+td.ln{white-space:nowrap;font-family:Consolas,'D2Coding',monospace;font-size:12.5px;background:var(--gray-soft)}
+b{color:var(--navy)}
+.memo{background:var(--amber-soft);border-radius:8px;padding:8px 12px;margin:8px 0;font-size:13.5px}
+.memo::before{content:"🔑 비유  ";font-weight:800;color:var(--amber)}
+.warn{background:#fdeceb;border-radius:8px;padding:8px 12px;margin:8px 0;font-size:13.5px}
+@media (prefers-color-scheme:dark){.warn{background:#3a1c1a}}
+.warn::before{content:"⚠ 주의  ";font-weight:800;color:var(--red)}
+.ok{background:var(--green-soft);border-radius:8px;padding:8px 12px;margin:8px 0;font-size:13.5px}
+.ok::before{content:"✅ 한 줄  ";font-weight:800;color:var(--green)}
+.todo{background:var(--blue-soft);border-radius:8px;padding:8px 12px;margin:8px 0;font-size:13.5px}
+.todo::before{content:"👉 직접 해보기  ";font-weight:800;color:var(--blue)}
+code{background:var(--gray-soft);padding:1px 5px;border-radius:4px;font-size:13px;font-family:Consolas,'D2Coding',monospace}
+pre{background:var(--term);color:var(--term-ink);border-radius:10px;padding:12px 14px;overflow-x:auto;font-size:13px;line-height:1.55;font-family:Consolas,'D2Coding',monospace;margin:8px 0}
+pre code{background:none;padding:0;color:inherit;font-size:inherit}
+pre .c{color:#8b93a7}
+pre .g{color:#7ed49a}
+pre .r{color:#ff8a80}
+.step{display:flex;gap:10px;margin:8px 0;align-items:flex-start}
+.step .n{flex:0 0 26px;height:26px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px}
+@media (prefers-color-scheme:dark){.step .n{background:#345;color:#fff}}
+.step div{flex:1}
+.check{list-style:none;padding:0;margin:8px 0}
+.check li{padding:5px 0 5px 28px;position:relative}
+.check li::before{content:"☐";position:absolute;left:4px;top:4px;color:var(--muted)}
+.backtop{position:fixed;right:18px;bottom:18px;background:var(--navy);color:#fff;border-radius:99px;padding:8px 14px;font-size:12px;text-decoration:none;opacity:.9}
+.small{font-size:12.5px;color:var(--muted)}
+.kbd{display:inline-block;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 6px;font-size:12px;background:var(--card)}
+.fig{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;margin:10px 0}
+.fig img{max-width:100%;display:block;margin:0 auto;border-radius:6px}
+.fig .cap{font-size:12.5px;color:var(--muted);margin-top:6px;text-align:center}
+.samples{display:flex;gap:14px;flex-wrap:wrap;margin:8px 0}
+.samples .s{flex:0 0 160px;text-align:center;font-size:12.5px}
+.samples .s img{width:150px;height:150px;border-radius:8px;border:1px solid var(--line)}
+.flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0;font-size:13px}
+.flow span{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:4px 9px}
+.flow i{color:var(--muted);font-style:normal}
+</style></head><body>
+<header class="top"><div class="top-in">
+<div class="brand"><span class="dot"></span> AI 시스템반도체 설계 (2기) · 개인 학습노트</div>
+<h1>증강 모델 보드 추론 학습노트 — EX_07 코드 한 줄씩</h1>
+<div class="sub">Claude Code와 대화하며 정리한 내용 · EX_05와 한 줄만 다른 파일이 왜 다르게 동작하는지, 세 모델을 어떻게 비교하는지 · 비전공자 눈높이</div>
+<div class="meta"><span class="tag warn">개인 학습용</span><span class="tag">최초 작성 2026-09-15</span><span class="tag">실습: EX_07_Board_RPS_MobileNetV2_HD_Augmentation.py</span><span class="tag">환경: 라즈베리파이5 보드 6번, MobaXterm SSH, USB 웹캠</span><span class="tag">노트 위치: 학습노트/</span></div>
+</div></header>
+
+<div class="layout">
+<nav class="toc">
+<h4>시작</h4>
+<ul class="toc-list">
+<li><a href="#s0"><span class="toc-n start">0</span>지금 내 상태</a></li>
+<li><a href="#s1"><span class="toc-n start">1</span>이 실습이 뭐야</a></li>
+<li><a href="#s2"><span class="toc-n start">2</span>단어 사전 (먼저 읽기)</a></li>
+<li><a href="#s3"><span class="toc-n start">3</span>큰 그림: 03_CNN 장 전체</a></li>
+</ul>
+<h4>코드 한 줄씩</h4>
+<ul class="toc-list">
+<li><a href="#s4"><span class="toc-n">4</span>1~9줄: 모듈·검출기</a></li>
+<li><a href="#s5"><span class="toc-n">5</span>10줄: 유일하게 다른 줄</a></li>
+<li><a href="#s6"><span class="toc-n">6</span>11~46줄: 모델 정보·상수·make_square_img</a></li>
+<li><a href="#s7"><span class="toc-n">7</span>48~91줄: processImage</a></li>
+<li><a href="#s8"><span class="toc-n">8</span>93~125줄: 카메라·루프·정리</a></li>
+</ul>
+<h4>결과와 참고</h4>
+<ul class="toc-list">
+<li><a href="#s9"><span class="toc-n gray">9</span>모델 파일 준비와 실행</a></li>
+<li><a href="#s10"><span class="toc-n gray">10</span>세 모델 비교 실험 설계</a></li>
+<li><a href="#s11"><span class="toc-n gray">11</span>왜 같은 코드가 다르게 동작하나</a></li>
+<li><a href="#s12"><span class="toc-n gray">12</span>같은 폴더 안 tflite 4개 정리</a></li>
+<li><a href="#s13"><span class="toc-n gray">13</span>직접 해보기 (실험)</a></li>
+<li><a href="#s14"><span class="toc-n gray">14</span>복습 체크리스트</a></li>
+</ul>
+</nav>
+
+<main class="main">
+
+<h2 id="s0">0. 지금 내 상태 (2026-09-15 기준)</h2>
+<div class="tbl"><table>
+<tr><th>항목</th><th>상태</th></tr>
+<tr><td>파일 (PC 원본)</td><td><code>Lec_python\2\On-DeviceAI라즈베리파이5_Lab_[64-302-01]\02.examples(Board)\examples\03_CNN_Based_On-Device_AI\EX_07_Board_RPS_MobileNetV2_HD_Augmentation.py</code></td></tr>
+<tr><td>파일 (보드)</td><td><code>/home/willtek/work/examples/03_CNN_Based_On-Device_AI/EX_07_Board_RPS_MobileNetV2_HD_Augmentation.py</code></td></tr>
+<tr><td>모델 파일</td><td>같은 폴더의 <code>RPS_MobileNetV2_Augmentation.tflite</code> (9,517,460바이트). EX_06 노트북 마지막 셀이 찍은 숫자와 같다 = 강사님이 EX_06으로 만든 것</td></tr>
+<tr><td>EX_05와의 차이</td><td><b>10번 줄 파일 이름 하나.</b> <code>diff</code>로 확인함</td></tr>
+<tr><td>앞 단계에서 본 것</td><td>EX_04: 손 없어도 답함, 가위 약함. EX_05: 손 잘라내니 나아졌지만 왼손·어두운 곳·다른 사람 손은 여전히 틀림. 관절 그리기(draw=True) 켜면 선이 잘려 들어가 더 틀림</td></tr>
+<tr><td>Colab EX_06</td><td>돌렸다면 Drive <code>files/save/RPS_MobileNetV2_Augmentation.tflite</code>가 내 모델. 안 돌렸으면 강사님 모델로 진행 가능</td></tr>
+</table></div>
+<div class="ok">이 노트는 125줄을 전부 싣되, EX_05와 같은 줄은 범위로 묶어 <code>Board_HandDetect_EX05_학습노트</code>의 절 번호를 적었다. 이 파일에서 <b>새로 배우는 건 코드가 아니라 "모델만 바꿨을 때 뭐가 달라지나"를 관찰하는 방법</b>이다.</div>
+
+<h2 id="s1">1. 이 실습이 뭐야</h2>
+<div class="qa"><div class="q">한 줄로 뭘 하는 거야?</div>
+<div>EX_05와 <b>완전히 같은 코드</b>로, 모델 파일만 EX_06(증강 학습)이 만든 것으로 바꿔 돌린다. 손 찾기·자르기·표시는 그대로이고, 판정하는 두뇌만 교체한 것. 그래서 EX_05와 나란히 돌려 보면 <b>"모델만 바꾸면 얼마나 달라지나"</b>가 순수하게 보인다.</div>
+<div class="memo">같은 카메라, 같은 조명, 같은 손, 같은 절차로 시험을 보는데 채점관만 바꾸는 것. 점수 차이가 나면 그건 전부 채점관(모델) 차이다.</div></div>
+<div class="qa"><div class="q">왜 코드를 안 바꾸고 파일 이름만 바꿨어?</div>
+<div><b>비교 실험의 기본 원칙</b>이다. 한 번에 하나만 바꿔야 결과 차이의 원인을 알 수 있다. EX_04→EX_05는 코드(입력 처리)만 바꿨고, EX_05→EX_07은 모델만 바꿨다. 둘을 한꺼번에 바꿨으면 뭐 때문에 좋아졌는지 모른다. 대학원 보고서에서 양자화 보정 방식 10종을 비교할 때도 다른 조건은 전부 고정했던 것과 같다.</div></div>
+<div class="qa"><div class="q">.tflite 파일만 바꾸면 코드가 그냥 돌아가?</div>
+<div>입력 모양(224×224×3)과 출력 모양(3개)이 같으면 된다. EX_03과 EX_06은 모델 구조가 완전히 같아서(파라미터 2,422,339개) 파일 크기까지 거의 같고, 안에 든 숫자(가중치)만 다르다. 코드는 파일을 열어 "입력 크기 얼마?"를 물어보고(16~18줄) 그에 맞춰 동작하니 이름만 바꿔도 된다. 나중에 04_Lightweighting의 INT8 모델은 자료형이 int8이라 조금 다르지만, 15줄에서 자료형도 파일에서 읽기 때문에 그것도 그대로 돈다.</div></div>
+
+<h2 id="s2">2. 단어 사전 (먼저 읽기)</h2>
+<div>EX_04·05·06 노트에 나온 단어는 뺐다. 이 노트에서 처음 쓰는 것만.</div>
+<div class="tbl"><table>
+<tr><th>단어</th><th>한 줄 뜻</th><th>비유</th></tr>
+<tr><td><b>통제 변인</b> (control variable)</td><td>비교 실험에서 고정해 두는 조건. 여기선 코드·카메라·조명·손</td><td>시험 조건 동일</td></tr>
+<tr><td><b>조작 변인</b> (independent variable)</td><td>일부러 바꾸는 단 하나. 여기선 모델 파일</td><td>바꾸는 것 하나</td></tr>
+<tr><td><b>A/B 테스트</b></td><td>A와 B를 같은 조건에서 번갈아 써 보고 비교하는 것. EX_05(A) vs EX_07(B)</td><td>둘 중 뭐가 나은지 시식</td></tr>
+<tr><td><b>일반화</b></td><td>본 적 없는 조건(왼손, 어두움, 다른 사람)에서도 맞히는 능력. 증강 모델이 노리는 것</td><td>응용력</td></tr>
+<tr><td><b>도메인 차이</b> (domain gap)</td><td>학습 사진 조건과 실제 사용 조건의 차이. 이 실습에서 틀리는 근본 원인</td><td>연습장과 실전장의 차이</td></tr>
+<tr><td><b>혼동</b> (confusion)</td><td>어떤 클래스를 어떤 클래스로 잘못 보는지. "가위를 보로 본다"처럼 방향이 있다</td><td>헷갈리는 짝</td></tr>
+</table></div>
+
+<h2 id="s3">3. 큰 그림: 03_CNN 장 전체</h2>
+<div class="flow"><span>EX_01 Colab 카메라</span><i>→</i><span>EX_02 보드 카메라</span><i>→</i><span>EX_03 학습</span><i>→</i><span>EX_04 전체 판정</span><i>→</i><span>EX_05 손만 판정</span><i>→</i><span>EX_06 증강 학습</span><i>→</i><span><b>EX_07 증강 모델로 손만 판정</b></span></div>
+<div class="tbl"><table>
+<tr><th>보드 예제</th><th>입력 처리</th><th>모델</th><th>바꾼 것</th><th>보여주는 것</th></tr>
+<tr><td>EX_04</td><td>화면 전체</td><td>기본 (EX_03)</td><td>—</td><td>tflite 추론 기본. 전체 판정의 한계</td></tr>
+<tr><td>EX_05</td><td>손만 잘라냄</td><td>기본 (EX_03)</td><td>입력 처리</td><td>전처리만으로 개선</td></tr>
+<tr><td><b>EX_07</b></td><td>손만 잘라냄</td><td><b>증강 (EX_06)</b></td><td><b>모델</b></td><td><b>모델만으로 개선</b></td></tr>
+</table></div>
+<div>EX_07의 코드 구조는 EX_05 노트 3절의 흐름 그대로다. 카메라 320×240 → MediaPipe 손 찾기 → 박스 → 30픽셀 넓히기 → 자르기 → 흰 배경 224 → RGB → 모델 → argmax → 박스+글자.</div>
+
+<h2 id="s4">4. 1~9줄: 모듈·검출기</h2>
+<pre><code>1  # 모듈 로딩
+2  from ai_edge_litert.interpreter import Interpreter
+3  import numpy as np
+4  import time
+5  import cv2
+6  from cvzone.HandTrackingModule import HandDetector
+7  hd = HandDetector(maxHands=1)
+8
+9  # TFLite 모델 로딩</code></pre>
+<div class="tbl"><table>
+<tr><th>줄</th><th>뜻</th><th>EX_05 노트</th></tr>
+<tr><td class="ln">2~5</td><td>LiteRT 실행기, 배열, 시계, OpenCV. 같음.</td><td>4절</td></tr>
+<tr><td class="ln">6~7</td><td>MediaPipe 손 검출기 준비, 손 하나. 같음. 관절을 화면에 보려면 <code>frame.copy()</code>에 그리는 방법(EX_05 노트 실험)을 쓴다.</td><td>4절</td></tr>
+</table></div>
+
+<h2 id="s5">5. 10줄: 유일하게 다른 줄</h2>
+<pre><code><span class="r">-  modelPath = 'RPS_MobileNetV2.tflite'                  # EX_05</span>
+<span class="g">+  modelPath = 'RPS_MobileNetV2_Augmentation.tflite'     # EX_07</span></code></pre>
+<div class="tbl"><table>
+<tr><th>줄</th><th>뜻</th></tr>
+<tr><td class="ln">10 modelPath = 'RPS_MobileNetV2_Augmentation.tflite'</td><td>읽을 모델 파일. EX_06 노트북 36번 셀의 <code>tfliteFileName</code>과 같은 이름이어야 한다. 이 파일은 좌우 반전·이동·밝기·줌 변형을 겪으며 학습한 가중치를 담고 있다. 폴더 없이 이름만이라 <b>이 폴더에서 실행</b>해야 한다.</td></tr>
+</table></div>
+<div class="qa"><div class="q">파일 안에 뭐가 어떻게 다른 거야?</div>
+<div>구조는 EX_03 모델과 100% 같다. MobileNetV2 본체(동결, 2,257,984개)는 두 파일에서 <b>완전히 같은 숫자</b>다. 둘 다 ImageNet 가중치를 그대로 얼려 두었으니까. 다른 건 새로 붙인 Dense(128)와 Dense(3)의 <b>164,355개 숫자뿐</b>이다. 이 6.8%의 숫자가 "뒤집힌 손, 어두운 손, 밀린 손"도 가위·바위·보로 보도록 조정돼 있다. 파일 크기 차이 528바이트는 저장 시 메타데이터 차이일 뿐 내용 차이가 아니다.</div></div>
+
+<h2 id="s6">6. 11~46줄: 모델 정보·상수·make_square_img</h2>
+<pre><code>11  interpreter = Interpreter(model_path = modelPath)
+12  interpreter.allocate_tensors()
+13  input_details = interpreter.get_input_details()
+14  output_details = interpreter.get_output_details()
+15  input_dtype = input_details[0]['dtype']
+16  height = input_details[0]['shape'][1]
+17  width = input_details[0]['shape'][2]
+18  print('model input shape:', (height, width))
+19  #print(input_details)
+20  #print(output_details)
+21
+22  ansToText = {0:'scissors', 1:'rock', 2:'paper'}
+23  colorList = [(255,0,0),(0,255,0),(0,0,255)]
+24  IMG_SIZE = 224
+25  offset = 30
+26
+27  def make_square_img(img):
+28      ho, wo = img.shape[0], img.shape[1]
+29      aspectRatio = ho/wo
+30      wbg = np.ones((IMG_SIZE, IMG_SIZE, 3), np.uint8) * 255
+32      if aspectRatio > 1: # portrait
+33          k = IMG_SIZE/ho
+34          wk = int(wo*k)
+35          img = cv2.resize( img, (wk, IMG_SIZE))
+36          img_h, img_w = img.shape[0], img.shape[1]
+37          d = (IMG_SIZE - img_w) // 2
+38          wbg [:img_h, d:img_w+d] = img
+39      else: # landscape
+40          k = IMG_SIZE/wo
+41          hk = int(ho*k)
+42          img = cv2.resize( img, (IMG_SIZE, hk))
+43          img_h, img_w = img.shape[0], img.shape[1]
+44          d = (IMG_SIZE - img_h) // 2
+45          wbg [d:img_h+d, :img_w ] = img
+46      return wbg</code></pre>
+<div class="tbl"><table>
+<tr><th>줄</th><th>뜻</th><th>EX_05 노트</th></tr>
+<tr><td class="ln">11~20</td><td>파일 열기 → 메모리 잡기 → 입력·출력 정보 → 자료형·크기 읽기 → <code>(224, 224)</code> 출력. 증강 모델도 224라 같은 값이 찍힌다.</td><td>5절</td></tr>
+<tr><td class="ln">22~25</td><td>번호→이름(EX_06 폴더 번호와 같음), 색, 224, offset 30.</td><td>6절</td></tr>
+<tr><td class="ln">27~46</td><td>잘라낸 손을 비율 유지한 채 흰 배경 224 정사각형에 놓는 함수. 세로 사진은 좌우 여백, 가로 사진은 상하 여백.</td><td>7절 (숫자 예시 포함)</td></tr>
+</table></div>
+
+<h2 id="s7">7. 48~91줄: processImage</h2>
+<pre><code>48  def processImage(frame):
+50      hands, _ = hd.findHands(frame, draw=False)
+51      if not hands: return
+54      x, y, w, h = hands[0]['bbox']
+57      if x&lt;offset or y&lt;offset or x+w+offset&gt;320 or y+h&gt;240: return
+60      x1, y1 = x-offset,  y-offset
+63      x2, y2 = x+w+offset, y+h
+66      img = frame[y1:y2, x1:x2]
+69      img = make_square_img(img)
+72      img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+75      img = np.expand_dims(img, 0)
+79      interpreter.set_tensor(input_details[0]['index'], img.astype(input_dtype))
+81      interpreter.invoke()
+83      output_data = interpreter.get_tensor(output_details[0]['index'])[0]
+84      ans = np.argmax(output_data)
+85      text = ansToText[ans]
+88      cv2.rectangle(frame, (x1, y1), (x2, y2), colorList[ans], 2)
+91      cv2.putText(frame,text,(x1,y1-7),cv2.FONT_HERSHEY_PLAIN,2,colorList[ans],2)</code></pre>
+<div class="tbl"><table>
+<tr><th>줄</th><th>뜻</th><th>EX_05 노트</th></tr>
+<tr><td class="ln">50~51</td><td>손 찾기. 없으면 끝. <code>draw=False</code>여야 잘라낸 사진에 선이 안 들어간다(오늘 확인).</td><td>8절</td></tr>
+<tr><td class="ln">54~57</td><td>박스 좌표, 가장자리 30픽셀 검사.</td><td>8절</td></tr>
+<tr><td class="ln">60~69</td><td>넓혀서 자르고 정사각형으로.</td><td>8절</td></tr>
+<tr><td class="ln">72~75</td><td>RGB, (1,224,224,3).</td><td>9절</td></tr>
+<tr><td class="ln">79~85</td><td>추론 3단계 → argmax → 이름. <b>이 다섯 줄이 실행될 때 쓰이는 숫자만 EX_05와 다르다.</b></td><td>9절, EX_04 노트 7절</td></tr>
+<tr><td class="ln">88~91</td><td>박스와 글자를 손 위에.</td><td>9절</td></tr>
+</table></div>
+
+<h2 id="s8">8. 93~125줄: 카메라·창·메인 루프·정리</h2>
+<pre><code>94   cap = cv2.VideoCapture(0)
+95   cap.set(cv2.CAP_PROP_FRAME_WIDTH,320)
+96   cap.set(cv2.CAP_PROP_FRAME_HEIGHT,240)
+97   cap.set(cv2.CAP_PROP_BUFFERSIZE,1)
+100  cv2.namedWindow('cam', cv2.WINDOW_NORMAL)
+101  cv2.resizeWindow('cam', 320+40, 240+60)
+103  startTime = time.time()
+104  while(cap.isOpened()):
+105      ret,frame=cap.read()
+106      if not ret: break
+109      processImage(frame)
+112      curTime = time.time()
+113      fps = 1/(curTime - startTime)
+114      startTime = curTime
+115      cv2.putText(frame,f'FPS: {fps:.1f}',(20, 50),cv2.FONT_HERSHEY_PLAIN,2,(0,255,255),2)
+118      cv2.imshow('cam',frame)
+121      key = cv2.waitKey(10)
+122      if  key == ord('q'): break
+124  cap.release()
+125  cv2.destroyAllWindows()</code></pre>
+<div>EX_02·04·05와 글자 하나 다르지 않다. 카메라 320×240·버퍼 1, 'cam' 창(X11로 PC에 뜸), 찍기 → processImage → FPS → 표시 → q, 닫기. 뜻은 EX_05 노트 10절, EX_04 노트 8~11절.</div>
+
+<h2 id="s9">9. 모델 파일 준비와 실행</h2>
+<h3>어느 모델로 돌릴지 정하기</h3>
+<div class="tbl"><table>
+<tr><th>선택</th><th>할 일</th></tr>
+<tr><td>강사님 증강 모델로 (빠름)</td><td>아무것도 안 해도 된다. 폴더에 이미 <code>RPS_MobileNetV2_Augmentation.tflite</code>가 있다</td></tr>
+<tr><td>내가 EX_06으로 만든 모델로</td><td>① 보드에서 백업: <code>cp RPS_MobileNetV2_Augmentation.tflite RPS_MobileNetV2_Augmentation_teacher.tflite</code><br>② Drive <code>files/save/RPS_MobileNetV2_Augmentation.tflite</code> 다운로드 → 탐색기에서 MobaXterm 왼쪽 목록(이 폴더)으로 끌어다 놓기 → 덮어쓰기<br>③ <code>ls -la *.tflite</code>로 확인</td></tr>
+</table></div>
+<h3>실행</h3>
+<pre><code>cd ~/work/examples/03_CNN_Based_On-Device_AI
+source ~/work/env/bin/activate
+python EX_07_Board_RPS_MobileNetV2_HD_Augmentation.py</code></pre>
+<div>터미널 출력과 창 모양은 EX_05와 같다. XNNPACK 2번, MediaPipe 경고, <code>model input shape: (224, 224)</code>, 그리고 창. FPS도 EX_05와 같은 수준이어야 한다(모델 계산량이 같으니까). 창이 안 뜨고 <code>could not connect to display</code>가 나오면 MobaXterm X server 재시작 후 새 세션.</div>
+
+<h2 id="s10">10. 세 모델 비교 실험 설계</h2>
+<div>이 실습의 진짜 내용이다. EX_05와 EX_07을 <b>같은 조건</b>에서 번갈아 돌리며 아래 표를 채운다. 조건을 바꿀 땐 하나씩만.</div>
+<div class="tbl"><table>
+<tr><th>조건</th><th>어떻게</th><th>EX_05 (기본 모델)</th><th>EX_07 (증강 모델)</th><th>예상</th></tr>
+<tr><td>오른손, 밝은 곳, 벽 배경</td><td>기준 조건. 가위·바위·보 각 10번</td><td>&nbsp;</td><td>&nbsp;</td><td>둘 다 잘됨. 비슷</td></tr>
+<tr><td><b>왼손</b></td><td>같은 자리에서 왼손</td><td>&nbsp;</td><td>&nbsp;</td><td>EX_05 많이 틀림, EX_07 잘됨 (<code>horizontal_flip</code>)</td></tr>
+<tr><td><b>어두운 곳</b></td><td>조명 등지거나 그늘로</td><td>&nbsp;</td><td>&nbsp;</td><td>EX_07 유리 (<code>brightness_range</code>)</td></tr>
+<tr><td>손을 화면 구석에</td><td>30픽셀 규칙 안에서 최대한 옆으로</td><td>&nbsp;</td><td>&nbsp;</td><td>EX_07 약간 유리 (<code>shift</code>)</td></tr>
+<tr><td>손을 멀리 / 가까이</td><td>50cm / 15cm</td><td>&nbsp;</td><td>&nbsp;</td><td>EX_07 약간 유리 (<code>zoom</code>)</td></tr>
+<tr><td>손을 기울여서</td><td>30도쯤 기울임</td><td>&nbsp;</td><td>&nbsp;</td><td>둘 다 비슷하게 약함 (<code>rotation_range=0.2°</code>는 효과 없음)</td></tr>
+<tr><td>다른 사람 손</td><td>옆 사람</td><td>&nbsp;</td><td>&nbsp;</td><td>둘 다 약할 수 있음. 증강은 손 모양 다양성을 못 늘린다</td></tr>
+</table></div>
+<div class="todo">표를 종이나 메모장에 그려 두고 조건마다 "10번 중 몇 번 맞음"을 적는다. 숫자가 남아야 비교가 된다. 끝나면 이 노트에 결과를 추가하자. 이 표 자체가 포트폴리오 재료다(모델 평가를 조건별로 했다는 증거).</div>
+
+<h2 id="s11">11. 왜 같은 코드가 다르게 동작하나</h2>
+<div>코드는 "사진을 준비해서 모델에 넣고 답을 받는" 절차일 뿐이고, <b>답을 정하는 건 모델 안의 숫자</b>다. EX_05와 EX_07은 절차가 같고 숫자가 다르다.</div>
+<div class="tbl"><table>
+<tr><th>상황</th><th>기본 모델 (EX_03 학습)</th><th>증강 모델 (EX_06 학습)</th></tr>
+<tr><td>왼손 사진이 들어오면</td><td>오른손만 배웠으니 엄지 위치가 반대인 낯선 모양. 헷갈림</td><td>학습 때 50%는 뒤집힌 사진이었음. 익숙함</td></tr>
+<tr><td>어두운 사진이 들어오면</td><td>밝은 사진만 배움. 피부색 톤이 달라 헷갈림</td><td>10~90% 밝기를 다 봤음</td></tr>
+<tr><td>손이 치우친 사진</td><td>중앙에 있는 손만 배움</td><td>±10% 밀린 사진을 봤음</td></tr>
+<tr><td>깨끗한 정면 오른손</td><td>이 조건만 파서 100%</td><td>98.9%. 조금 덜 정확</td></tr>
+</table></div>
+<div class="memo">기본 모델은 "기출문제만 완벽히 외운 학생", 증강 모델은 "문제를 변형해 가며 풀어 본 학생". 기출 그대로 나오면 앞이 유리하고, 살짝만 바뀌어도 뒤가 유리하다. 웹캠 앞은 항상 "살짝 바뀐" 상황이다.</div>
+
+<h2 id="s12">12. 같은 폴더 안 tflite 4개 정리</h2>
+<div>백업까지 하면 이 폴더에 tflite가 넷이 된다. 헷갈리지 않게 정리.</div>
+<div class="tbl"><table>
+<tr><th>파일</th><th>누가 만듦</th><th>어느 코드가 읽나</th><th>크기</th></tr>
+<tr><td><code>RPS_MobileNetV2.tflite</code></td><td>내가 EX_03으로 (덮어썼다면) / 강사님</td><td>EX_04, EX_05</td><td>9,516,932</td></tr>
+<tr><td><code>RPS_MobileNetV2_teacher.tflite</code></td><td>강사님 (백업)</td><td>10줄 이름 바꾸면</td><td>9,516,932</td></tr>
+<tr><td><code>RPS_MobileNetV2_Augmentation.tflite</code></td><td>내가 EX_06으로 (덮어썼다면) / 강사님</td><td><b>EX_07</b></td><td>9,517,460</td></tr>
+<tr><td><code>RPS_MobileNetV2_Augmentation_teacher.tflite</code></td><td>강사님 (백업)</td><td>10줄 이름 바꾸면</td><td>9,517,460</td></tr>
+</table></div>
+<div class="small">어느 파일이 내 것인지 확실히 하려면 <code>md5sum *.tflite</code>. 지문이 다르면 다른 파일이다. 내 모델과 강사님 모델은 학습 때 무작위가 달라서 지문이 반드시 다르다.</div>
+
+<h2 id="s13">13. 직접 해보기 (실험)</h2>
+<div class="tbl"><table>
+<tr><th>바꿀 곳</th><th>어떻게</th><th>볼 것</th><th>예상</th></tr>
+<tr><td>모델 4개 돌려 가며</td><td>10줄 이름을 <code>_teacher</code> 붙였다 떼며 실행</td><td>내 모델 vs 강사님 모델</td><td>거의 같아야 정상. 크게 다르면 내 EX_06 학습이 잘못된 것</td></tr>
+<tr><td>확률 표시</td><td>85줄 뒤 <code>text = f'{text} {output_data[ans]*100:.0f}%'</code></td><td>왼손일 때 확률</td><td>EX_05는 왼손에서 확률이 낮게 흔들리고, EX_07은 높게 안정</td></tr>
+<tr><td>두 모델 동시에</td><td>모델 두 개를 열어(<code>interpreter2</code>) 같은 <code>img</code>를 둘 다에 넣고 글자를 두 줄로</td><td>한 화면에서 A/B</td><td>번갈아 실행할 필요 없이 실시간 비교. 코드 15줄쯤 추가</td></tr>
+<tr><td>잘라낸 사진 보기</td><td>69줄 뒤 <code>cv2.imshow('crop', img)</code></td><td>모델이 보는 사진</td><td>왼손 crop이 학습 사진의 거울상이라는 걸 눈으로 확인</td></tr>
+<tr><td>회전 증강 고친 모델</td><td>EX_06에서 <code>rotation_range=20</code>으로 다시 학습(14분) → 이 폴더에 <code>_rot20.tflite</code>로 넣고 10줄 수정</td><td>기울인 손</td><td>기울인 손에서 EX_07보다 나아짐</td></tr>
+</table></div>
+<div class="todo">"두 모델 동시에"가 이 실습을 한 단계 올리는 실험이다. 화면에 <code>base: rock 62% / aug: paper 91%</code>처럼 나란히 찍히면 증강 효과가 한눈에 보이고, 발표 자료로도 좋다. 하고 싶으면 코드를 같이 짜자.</div>
+
+<h2 id="s14">14. 복습 체크리스트</h2>
+<ul class="check">
+<li>EX_05와 EX_07이 정확히 어느 줄이 다른지</li>
+<li>두 tflite 파일에서 같은 숫자와 다른 숫자가 각각 몇 개인지 (2,257,984 / 164,355)</li>
+<li>왜 한 번에 하나만 바꿔서 비교하는지 (통제 변인·조작 변인)</li>
+<li>왼손·어두움·구석·거리 각각이 EX_06의 어느 설정과 대응되는지</li>
+<li>기울인 손은 왜 둘 다 약한지</li>
+<li>Colab 점수(100% vs 98.9%)와 보드 체감이 왜 반대인지</li>
+<li>모델 파일이 바뀌어도 코드가 그대로 도는 이유 (입출력 모양 같음, 15~17줄이 파일에서 읽음)</li>
+<li>10절 표를 실제로 채웠는지</li>
+</ul>
+<div class="ok">03_CNN 장 끝. 다음 <code>04_Lightweighting</code>은 바로 이 <code>RPS_MobileNetV2_Augmentation</code> 모델을 재료로 삼는다. EX_12(Colab, PTQ INT8) → EX_13(보드) → EX_14(Colab, QAT) → EX_15(보드). 보드 코드는 이 파일과 거의 같고, <b>int8 자료형 처리</b>가 추가된다. 그때 15줄 <code>input_dtype</code>이 왜 파일에서 읽는 값이어야 했는지가 드러난다.</div>
+
+</main>
+</div>
+<a class="backtop" href="#s0">↑ 맨 위</a>
+</body></html>

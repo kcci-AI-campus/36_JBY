@@ -1,0 +1,2 @@
+timestamp,elapsed_s,power_w,mode,cum_energy_wh,cpu_temp_c
+2026-09-27 15:16:39,0.05,1.992,standby,1.4e-05,46.3

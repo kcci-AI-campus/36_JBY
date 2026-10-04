@@ -1,0 +1,16 @@
+10
+idle_w(camera open, no inference) 1.84
+ssdlite320_mbv3_fp32.tflite      9.3MB in320 fp32 invoke   20.1ms fps  15.1 W 3.46 (dyn 1.62) mJ/inf  107.3 cpu 31.4% temp 52.7 n=453
+ssdlite320_mbv3_int8.tflite      3.1MB in320 int8 invoke   10.2ms fps  15.1 W 2.41 (dyn 0.57) mJ/inf   37.8 cpu 14.0% temp 50.5 n=453
+yolo11n_fp32.tflite             10.6MB in320 fp32 invoke   23.9ms fps  15.1 W 4.48 (dyn 2.64) mJ/inf  175.2 cpu 35.7% temp 54.9 n=453
+yolo11n_int8.tflite              3.0MB in320 fp32 invoke   10.4ms fps  15.1 W 2.36 (dyn 0.52) mJ/inf   34.6 cpu 14.6% temp 51.0 n=453
+yolov26n_fp32.tflite             9.7MB in320 fp32 invoke   22.7ms fps  15.1 W 4.27 (dyn 2.44) mJ/inf  161.6 cpu 34.2% temp 54.9 n=453
+yolov26n_int8.tflite             2.9MB in320 fp32 invoke   10.4ms fps  15.1 W 2.62 (dyn 0.78) mJ/inf   51.8 cpu 12.3% temp 52.1 n=453
+yolo8vn_fp32.tflite             12.2MB in320 fp32 invoke   24.8ms fps  15.1 W 4.60 (dyn 2.76) mJ/inf  183.3 cpu 37.8% temp 56.5 n=453
+yolo8vn_int8.tflite              3.3MB in320 fp32 invoke    9.3ms fps  15.1 W 2.45 (dyn 0.62) mJ/inf   40.8 cpu 13.6% temp 52.1 n=454
+yolo10n_fp32.tflite              9.3MB in320 fp32 invoke   24.2ms fps  15.1 W 4.25 (dyn 2.42) mJ/inf  160.0 cpu 36.2% temp 56.5 n=453
+yolo10n_int8.tflite              2.7MB in320 fp32 invoke   10.8ms fps  15.1 W 2.46 (dyn 0.62) mJ/inf   41.2 cpu 16.0% temp 53.2 n=454
+saved bench_power_5model.csv
+
+[stderr] INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
+

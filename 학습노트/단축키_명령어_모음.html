@@ -1,0 +1,275 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>단축키·명령어 모음</title>
+<style>
+:root{--navy:#0d1b3e;--ink:#1c2434;--muted:#1f2737;--paper:#f6f7fb;--card:#fff;--line:#e3e7f0;--blue:#1769d6;--blue-soft:#eaf2fe;--amber-soft:#fdf3df;--gray-soft:#f1f3f8;--green-soft:#e6f5ec;--red-soft:#fde8e7;--kbd:#ffffff;--kbd-line:#c5ccd9;}
+@media (prefers-color-scheme:dark){:root{--navy:#c9d6f5;--ink:#e7eaf1;--muted:#c9d1e2;--paper:#12141a;--card:#1b1e26;--line:#2c313c;--blue-soft:#16243a;--amber-soft:#332a12;--gray-soft:#20242e;--green-soft:#15291d;--red-soft:#3a1d1b;--kbd:#262a34;--kbd-line:#3d4452;}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Apple SD Gothic Neo','Pretendard','Malgun Gothic',-apple-system,sans-serif;background:var(--paper);color:var(--ink);margin:0;line-height:1.6;font-size:15px;word-break:keep-all;overflow-wrap:break-word}
+.wrap{max-width:960px;margin:0 auto 0 290px;padding:28px 20px 80px}
+h1{color:var(--navy);font-size:23px;margin:0 0 4px}
+.sub{color:var(--muted);font-size:13.5px;margin-bottom:16px}
+h2{font-size:18px;color:var(--navy);margin:34px 0 8px;border-bottom:2px solid var(--line);padding-bottom:5px}
+h3{font-size:15.5px;color:var(--navy);margin:22px 0 6px}
+h2,h3{scroll-margin-top:16px}
+.side{position:fixed;top:0;left:0;bottom:0;width:290px;overflow-y:auto;background:var(--card);border-right:1px solid var(--line);padding:16px 12px 40px;font-size:13px;line-height:1.45;z-index:10}
+.side-h{font-weight:800;color:var(--navy);font-size:15px;margin:0 4px 10px;display:flex;justify-content:space-between;align-items:center}
+.side-h button{display:none;font:inherit;font-size:12px;border:1px solid var(--line);background:var(--gray-soft);color:var(--ink);border-radius:6px;padding:2px 8px;cursor:pointer}
+.side input{width:100%;font:inherit;font-size:13px;padding:6px 9px;border:1px solid var(--line);border-radius:7px;background:var(--paper);color:var(--ink);margin:0 0 10px}
+.side ul{list-style:none;margin:0;padding:0}
+.side li.sec>a{display:block;font-weight:800;color:var(--navy);padding:6px 8px;border-radius:6px;margin-top:6px}
+.side li.q>a{display:block;color:var(--muted);padding:3px 8px 3px 18px;border-radius:6px;opacity:.85}
+.side a{text-decoration:none}
+.side a:hover{background:var(--gray-soft)}
+.side a.on{background:var(--blue-soft);color:var(--blue);opacity:1}
+@media (max-width:1000px){
+.side{position:static;width:auto;border-right:0;border-bottom:1px solid var(--line)}
+.side-h button{display:inline-block}
+.side.closed ul{display:none}
+.wrap{margin-left:auto}
+}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;margin:8px 0;font-size:13.8px;background:var(--card)}
+th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+th{background:var(--gray-soft);white-space:nowrap}
+td.d{white-space:nowrap;color:var(--muted);font-size:12.5px}
+tr.hide{display:none}
+b{color:var(--navy)}
+kbd{display:inline-block;font-family:inherit;font-size:12.5px;font-weight:700;background:var(--kbd);border:1px solid var(--kbd-line);border-bottom-width:2px;border-radius:5px;padding:0 6px;margin:1px 1px;white-space:nowrap}
+code{background:var(--gray-soft);padding:1px 6px;border-radius:5px;font-size:.9em;word-break:break-all}
+pre{background:var(--gray-soft);padding:10px 12px;border-radius:8px;overflow-x:auto;font-size:12.8px;line-height:1.5;margin:6px 0}
+pre code{background:none;padding:0;word-break:normal}
+.memo{background:var(--amber-soft);border-radius:8px;padding:8px 12px;margin:8px 0;font-size:13.5px}
+.ok{background:var(--green-soft);border-radius:8px;padding:8px 12px;margin:8px 0;font-size:13.5px}
+.bad{background:var(--red-soft);border-radius:8px;padding:8px 12px;margin:8px 0;font-size:13.5px}
+.steps{margin:6px 0 6px 0;padding-left:22px}
+.steps li{margin:3px 0}
+.ba{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ba>div>div{font-size:12.5px;font-weight:800;color:var(--muted);margin-bottom:2px}
+@media (max-width:640px){.ba{grid-template-columns:1fr}}
+@media print{.side{display:none}.wrap{margin-left:0}@page{size:A4;margin:12mm}:root{color-scheme:light!important}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}body{font-size:12.5px}table,pre{break-inside:avoid}h2,h3{break-after:avoid}}
+</style>
+
+<nav class="side" id="side">
+<div class="side-h">⌨️ 목차 <button type="button" id="sideToggle" aria-expanded="true">접기</button></div>
+<input id="q" type="search" placeholder="검색 (예: 여러 줄, xsim, 보드)" aria-label="표 검색">
+<ul id="sideList"></ul>
+</nav>
+
+<div class="wrap">
+<h1>⌨️ 단축키·명령어 모음</h1>
+<div class="sub">수업·실습 중에 몰랐던 단축키·명령어·설정 순서를 <b>바로 따라 칠 수 있게</b> 모아 둔 참고표 · 2026-09-30 시작, 새로 나올 때마다 이어서 추가 · 이 노트북(Windows 11, Vivado 2022.2)에서 직접 돌려 보거나 공식 문서로 확인한 것만 수록 · "왜 그런가"는 <code>개념문답_학습노트.html</code>에 · 왼쪽 검색창에 단어를 치면 표에서 그 줄만 남는다</div>
+
+<!-- ============================================================ -->
+<h2 id="vscode">A. VS Code 편집</h2>
+
+<h3 id="vscode-multi">여러 줄을 한 번에 고치기 (세로 선택 · 여러 커서)</h3>
+<div class="tw"><table>
+<tr><th>하고 싶은 것</th><th>키</th><th>메모</th><th>처음</th></tr>
+<tr><td>여러 줄의 <b>같은 칸</b>을 세로로 선택</td><td><kbd>Shift</kbd>+<kbd>Alt</kbd> 누른 채 마우스 드래그</td><td>시작 칸 클릭 → 누른 채 대각선 반대쪽까지 끌기. 선택 후 <kbd>Delete</kbd> 하면 그 칸만 지워짐</td><td class="d">09-30</td></tr>
+<tr><td>커서를 바로 아래/위 줄에 하나 더</td><td><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>↓</kbd> / <kbd>↑</kbd></td><td>누른 횟수만큼 커서가 늘어남. 이 상태로 타이핑하면 모든 줄에 동시에 입력</td><td class="d">09-30</td></tr>
+<tr><td>원하는 곳마다 커서 찍기</td><td><kbd>Alt</kbd>+클릭</td><td>줄이 떨어져 있어도 됨</td><td class="d">09-30</td></tr>
+<tr><td>커서를 다시 하나로</td><td><kbd>Esc</kbd></td><td></td><td class="d">09-30</td></tr>
+<tr><td>지금 단어와 같은 단어를 <b>하나씩</b> 추가 선택</td><td><kbd>Ctrl</kbd>+<kbd>D</kbd></td><td>누를 때마다 다음 같은 단어가 선택에 추가됨. 건너뛰기는 <kbd>Ctrl</kbd>+<kbd>K</kbd> 다음 <kbd>Ctrl</kbd>+<kbd>D</kbd></td><td class="d">09-30</td></tr>
+<tr><td>같은 단어를 <b>전부</b> 한 번에 선택</td><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>L</kbd></td><td>예: <code>output</code> 을 선택하고 누르면 파일 안 모든 <code>output</code> 에 커서</td><td class="d">09-30</td></tr>
+<tr><td>찾아 바꾸기에서 <b>다른 단어 속 글자는 빼기</b><br>(예: <code>a4</code> 를 바꾸는데 <code>U_FA4</code> 까지 바뀜)</td><td><kbd>Ctrl</kbd>+<kbd>H</kbd> 창에서 <kbd>Alt</kbd>+<kbd>W</kbd> (단어 단위, Whole Word) · <kbd>Alt</kbd>+<kbd>C</kbd> (대소문자 구분, Match Case)</td><td>기본은 대소문자 무시 + 단어 일부도 찾음 → <code>U_FA4</code> 의 <code>A4</code> 가 걸린다. 켜진 버튼은 파란 테두리. 출처: VS Code Default Keyboard Shortcuts</td><td class="d">10-01</td></tr>
+<tr><td>정해 둔 줄 범위 <b>안에서만</b> 찾아 바꾸기</td><td>범위를 드래그로 선택 → <kbd>Ctrl</kbd>+<kbd>H</kbd> → <kbd>Alt</kbd>+<kbd>L</kbd> (Find in Selection)</td><td><kbd>Ctrl</kbd>+<kbd>H</kbd> 만 쓰면 파일 전체가 대상. 한 파일에 모듈이 여러 개일 때(예: <code>adder.v</code> 의 <code>w_c1</code> 이 두 모듈에 있음) 유용. "몇 군데만 보면서 고르기"는 <kbd>Ctrl</kbd>+<kbd>D</kbd> 가 더 편하다</td><td class="d">10-01</td></tr>
+<tr><td>커서마다 <b>자기 줄 것</b>을 복사·붙여넣기</td><td>여러 커서 상태에서 <kbd>Ctrl</kbd>+<kbd>C</kbd> → <kbd>Ctrl</kbd>+<kbd>V</kbd></td><td>복사한 줄 수 = 커서 수이면 한 줄씩 나눠 붙는다(설정 <code>editor.multiCursorPaste</code> 기본값 <code>spread</code>, VS Code 1.39 부터)</td><td class="d">09-30</td></tr>
+<tr><td>마우스 없이 세로 선택 모드 켜기</td><td>메뉴 <b>선택(Selection) → 열 선택 모드(Column Selection Mode)</b></td><td>켜 두면 <kbd>Shift</kbd>+방향키가 세로 선택으로 바뀜. 상태 표시줄에서도 끌 수 있음</td><td class="d">09-30</td></tr>
+</table></div>
+<div class="memo">출처: VS Code 공식 문서 "Basic Editing — Multiple selections / Column (box) selection"(code.visualstudio.com/docs/editing/codebasics). 다른 프로그램(그래픽 드라이버 등)이 같은 키를 쓰고 있으면 안 먹을 수 있다 — 그때는 마우스 방법(<kbd>Shift</kbd>+<kbd>Alt</kbd> 드래그)을 쓴다.</div>
+
+<h3 id="vscode-verilog">Verilog 작업용 VS Code 설정 (1일차 교수님 설정)</h3>
+<div class="tw"><table>
+<tr><th>하고 싶은 것</th><th>키·메뉴</th><th>메모</th><th>처음</th></tr>
+<tr><td>코드 줄 맞춤 자동 정리</td><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> → <b>SystemVerilog Formatter - Format this file</b></td><td>확장 "SystemVerilog and Verilog Formatter" 필요(설치됨). 인자 <code>--column_limit 80 --indentation_spaces 4</code>, Verible Build <code>win64</code></td><td class="d">10-01</td></tr>
+<tr><td>저장할 때 문법 오류 밑줄</td><td>확장 "Verilog-HDL/SystemVerilog" 톱니 → Settings → Verilog › Linting › Linter = <code>xvlog</code></td><td>Verilog-2005 / SystemVerilog2012 표준 선택. <code>xvlog</code> 가 PATH 에 있어야 함(이 노트북은 있음)</td><td class="d">10-01</td></tr>
+</table></div>
+<div class="memo">출처: 1일차 자료 <code>day1.pdf</code> p.12–14, 20. 자세한 설명은 <code>Verilog_1일차_학습노트.html</code> 4장.</div>
+
+<h3 id="vscode-port">실전 예: 모듈 포트 목록 → 테스트벤치 연결로 바꾸기</h3>
+<p>설계 파일의 포트 목록을 복사해 와서 <code>input</code>/<code>output</code> 을 지우고, 앞에 <code>.</code> 과 뒤에 <code>(이름)</code> 을 붙이는 작업. 11줄을 한 줄씩 고치지 않는다.</p>
+<div class="ba">
+<div><div>전 (gates.v 에서 복사)</div><pre><code>    input  a,
+    input  b,
+    output y0,
+    output y1,
+    ...
+    output y6</code></pre></div>
+<div><div>후 (tb_gates.v 에 붙일 모양)</div><pre><code>    .a(a),
+    .b(b),
+    .y0(y0),
+    .y1(y1),
+    ...
+    .y6(y6)</code></pre></div>
+</div>
+<ol class="steps">
+<li><code>input  a,</code> 의 <b><code>i</code> 앞</b>을 클릭 → <kbd>Shift</kbd>+<kbd>Alt</kbd> 누른 채 <code>output y6</code> 줄의 <b><code>y</code> 바로 앞</b>까지 드래그 → <kbd>Delete</kbd>. (<code>input  </code> 과 <code>output </code> 은 글자 수가 같게 맞춰져 있어서 한 번에 지워진다)</li>
+<li>커서 11개가 남은 상태에서 <kbd>.</kbd> 입력 → 모든 줄 앞에 <code>.</code></li>
+<li><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>→</kbd> → 줄마다 이름(<code>a</code>, <code>b</code>, <code>y0</code> …)이 선택됨 → <kbd>Ctrl</kbd>+<kbd>C</kbd> (커서마다 자기 줄 이름을 따로 복사)</li>
+<li><kbd>→</kbd> (선택 풀고 이름 바로 뒤로) → <kbd>(</kbd> 입력 → <kbd>Ctrl</kbd>+<kbd>V</kbd> → <kbd>)</kbd> 입력. 줄마다 <b>자기 이름</b>이 들어간다</li>
+<li><kbd>Esc</kbd></li>
+</ol>
+<div class="bad"><b>줄임형 <code>.a,</code> 는 <code>.v</code> 파일에서 오류</b> (2026-09-30 <code>xvlog</code> 로 실측): <code>'.name implicit port connection' is not allowed in this dialect; use SystemVerilog mode instead</code>. <code>.a(a)</code> 로 쓰거나, <code>.</code> 을 빼고 순서대로(<code>gates DUT(a, b, y0, …)</code>) 쓴다. 순서형은 포트 순서가 하나만 어긋나도 <b>오류 없이 엉뚱하게 연결</b>되므로 <code>.a(a)</code> 가 안전하다.</div>
+
+<!-- ============================================================ -->
+<h2 id="vivado-cli">B. Vivado 명령줄 시뮬레이션 (GUI 없이)</h2>
+<p>이 노트북은 <code>C:\Xilinx\Vivado\2022.2\bin</code> 이 PATH(명령 이름만 치면 찾아 주는 폴더 목록)에 들어 있어서 <b>PowerShell·명령 프롬프트·VS Code 터미널 어디서든 이름만 치면</b> 된다(09-30 확인: <code>xvlog --version</code> → <code>Vivado Simulator v2022.2</code>).</p>
+
+<h3 id="xsim">xvlog → xelab → xsim (3단계)</h3>
+<div class="tw"><table>
+<tr><th>단계</th><th>명령</th><th>하는 일</th><th>처음</th></tr>
+<tr><td>① 읽기·문법 검사</td><td><code>xvlog gates.v tb_gates.v</code></td><td>파일을 읽고 문법 오류를 잡는다. 여기서 <code>ERROR</code> 가 나오면 코드 문제</td><td class="d">09-30</td></tr>
+<tr><td>② 묶기</td><td><code>xelab tb_gates -s tbsim</code></td><td>맨 위 모듈(테스트벤치 이름)부터 엮어 실행 파일 <code>tbsim</code> 을 만든다</td><td class="d">09-30</td></tr>
+<tr><td>③ 돌리기</td><td><code>xsim tbsim -runall</code></td><td><code>$finish</code> 까지 끝까지 돌리고 <code>$display</code> 결과를 찍는다</td><td class="d">09-30</td></tr>
+<tr><td>SystemVerilog 파일</td><td><code>xvlog -sv 파일.sv</code></td><td><code>-sv</code> 를 붙여야 SV 문법(<code>.a</code> 줄임형, <code>logic</code> 등)이 통과</td><td class="d">09-30</td></tr>
+</table></div>
+<div class="memo"><code>`timescale</code> 을 한 파일에라도 썼으면 <b>모든 파일에</b> 써야 ② 가 통과한다(오류 XSIM 43-4099). Vivado 가 새 파일을 만들 때 맨 위에 <code>`timescale 1ns / 1ps</code> 를 자동으로 넣어 주니 지우지 말 것.</div>
+
+<h3 id="vivado-gui">Vivado 화면 기본 조작 (1일차)</h3>
+<div class="tw"><table>
+<tr><th>하고 싶은 것</th><th>메뉴·키</th><th>메모</th><th>처음</th></tr>
+<tr><td>새 프로젝트 기본 폴더·언어 정하기</td><td><b>Tools → Settings → Project</b> → Specify project directory, Target Language = Verilog</td><td>한 번만 해 두면 New Project 때마다 그 폴더가 기본</td><td class="d">10-01</td></tr>
+<tr><td>Vivado 에서 파일 열면 VS Code 로</td><td><b>Tools → Settings → Text Editor → Custom Editor…</b> 에 <code>"C:/Users/LG/AppData/Local/Programs/Microsoft VS Code/Code.exe" -g [file name]:[line number]</code></td><td>경로를 <b>큰따옴표로</b> 감싸고 <code>-g</code> 앞뒤 띄어쓰기. Messages 오류를 더블클릭하면 VS Code 의 그 줄이 열린다. 한글 주석 깨짐도 피함</td><td class="d">10-01</td></tr>
+<tr><td>설계 / 시뮬레이션 파일 추가</td><td>Sources 창 <b>+</b> → design sources(설계) 또는 simulation sources(테스트벤치) → Create File</td><td></td><td class="d">10-01</td></tr>
+<tr><td>테스트벤치를 시뮬레이션 맨 위로</td><td>Simulation Sources 에서 파일 <b>오른쪽 클릭 → Set as Top</b></td><td>굵게 표시되면 Top</td><td class="d">10-01</td></tr>
+<tr><td>핀 배치 저장 (XDC 만들기)</td><td>I/O Ports 에서 Package Pin·I/O Std 입력 후 <kbd>Ctrl</kbd>+<kbd>S</kbd> → Create a new file, XDC</td><td>Basys3 는 I/O Std 를 <b>LVCMOS33</b> 으로(기본 LVCMOS18 아님)</td><td class="d">10-01</td></tr>
+<tr><td>내 코드가 만든 회로 그림</td><td>RTL ANALYSIS → Open Elaborated Design → <b>Schematic</b></td><td>Netlist 창: Nets = 선, Leaf Cells = 부품</td><td class="d">10-01</td></tr>
+</table></div>
+
+<h3 id="xsim-gui">Vivado 화면에서 시뮬레이션할 때</h3>
+<div class="tw"><table>
+<tr><th>하고 싶은 것 / 증상</th><th>방법</th><th>메모</th><th>처음</th></tr>
+<tr><td>코드 고친 뒤 다시 돌리기</td><td>파형 툴바의 <b>↻ Relaunch</b></td><td>교수님 판서 "reLaunch: 다시 실행". 처음부터 다시 컴파일·실행</td><td class="d">10-01</td></tr>
+<tr><td>끝까지 / 정해진 시간만큼 돌리기</td><td>▶ <b>Run All</b> / 옆 칸에 숫자·단위 넣고 ▶</td><td><code>$stop</code> 에서 멈춘다</td><td class="d">10-01</td></tr>
+<tr><td>시뮬레이션 다시 돌리기</td><td>먼저 <b>SIMULATION 제목줄 오른쪽 ✕</b> (또는 File → Close Simulation) → 그다음 Run Simulation</td><td>열린 채로 다시 누르면 <code>boost::filesystem::remove … simulate.log</code> "다른 프로세스가 파일을 사용 중" 오류. 이전 시뮬레이터 본체 <code>xsimk.exe</code> 가 로그를 잡고 있어서다(09-30 확인)</td><td class="d">09-30</td></tr>
+<tr><td>그래도 같은 오류</td><td>작업 관리자(<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Esc</kbd>)에서 <code>xsimk.exe</code> 끝내기</td><td></td><td class="d">09-30</td></tr>
+<tr><td>파형 값을 십진수로 보기</td><td>신호 오른쪽 클릭 → <b>Radix → Unsigned Decimal</b></td><td>기본은 16진수(<code>ff</code>). 모든 새 신호에 적용하려면 파형 창 Settings(톱니) → General → Default Radix. 출처: UG900</td><td class="d">10-01</td></tr>
+<tr><td>파형 신호 색 바꾸기</td><td>신호 오른쪽 클릭 → <b>Signal Color</b></td><td>강조할 신호만(예: 올림 <code>c</code> 노랑, 중간 올림 <code>w_c</code> 주황). <b>빨강·파랑 금지</b> — Vivado 파형에서 X 는 빨강, Z 는 파랑으로 그려져 헷갈림(교수님). 메뉴 출처: UG900</td><td class="d">10-01</td></tr>
+<tr><td>파형에 구분선 · 이름 붙이기</td><td>오른쪽 클릭 → <b>New Divider</b> / <b>Name → Custom</b></td><td>입력·중간·출력 묶음 구분, <code>w_c (4bit carry)</code> 처럼 설명 달기. 출처: UG900</td><td class="d">10-01</td></tr>
+<tr><td>모듈 안쪽 신호를 파형에 넣기</td><td>Scope 창에서 모듈(예: <code>DUT</code>) 클릭 → Objects 창의 신호를 파형 창으로 끌어다 놓기 → <b>↻ Relaunch</b></td><td>넣기 전에 지나간 시간은 기록이 없어서 다시 돌려야 앞부분이 보인다</td><td class="d">10-01</td></tr>
+<tr><td>파형이 안 보임 / 변화가 없음</td><td>파형 창의 <b>Zoom Fit</b> 버튼</td><td>테스트벤치가 몇 ns 만에 끝나도 화면은 기본 실행 시간 끝(1 µs 근처)을 보고 있다</td><td class="d">09-30</td></tr>
+<tr><td>파형에 <code>Z</code>·<code>X</code> 만 나옴</td><td>Sources 창에서 테스트벤치가 <b>굵게</b>(맨 위 모듈)인지 확인. 아니면 오른쪽 클릭 → Set as Top</td><td><code>Z</code> = 아무도 신호를 안 줌(떠 있음), <code>X</code> = 0인지 1인지 모름</td><td class="d">09-30</td></tr>
+<tr><td>TB 결과를 Tcl Console 에 글자로 찍기</td><td><code>$display("TOTAL %0d, MISMATCH = %0d", total, err);</code></td><td><code>%d</code> 는 변수 최대 자릿수만큼 앞에 빈칸(integer 7 → <code>[          7]</code>), <b><code>%0d</code></b> 는 빈칸 없이 <code>[7]</code>. <code>%b</code> 2진 · <code>%h</code> 16진. 문장은 <b>영어로</b> — 한글은 Vivado 콘솔에서 깨짐(UTF-8 파일을 CP949 로 읽음). 10-02 xsim 실측</td><td class="d">10-02</td></tr>
+</table></div>
+
+<h3 id="iverilog">Icarus Verilog (가벼운 무료 시뮬레이터)</h3>
+<div class="tw"><table>
+<tr><th>하고 싶은 것</th><th>명령</th><th>메모</th><th>처음</th></tr>
+<tr><td>컴파일</td><td><code>iverilog -o sim.out gates.v tb_gates.v</code></td><td><code>C:\iverilog\bin</code>, 버전 12.0. 합성은 못 하고 시뮬레이션만</td><td class="d">09-30</td></tr>
+<tr><td>실행</td><td><code>vvp sim.out</code></td><td></td><td class="d">09-30</td></tr>
+</table></div>
+
+<!-- ============================================================ -->
+<h2 id="vivado-tcl">C. Vivado Tcl 콘솔 · 보드 설정</h2>
+<p><b>Tcl 콘솔</b> = Vivado 창 아래쪽 탭. 메뉴를 클릭하는 대신 명령을 쳐서 같은 일을 한다.</p>
+
+<h3 id="tcl-query">확인용 명령</h3>
+<div class="tw"><table>
+<tr><th>하고 싶은 것</th><th>명령</th><th>결과 예 (이 노트북)</th><th>처음</th></tr>
+<tr><td>Vivado 버전</td><td><code>version -short</code></td><td><code>2022.2</code></td><td class="d">09-30</td></tr>
+<tr><td>Basys3 보드 파일이 인식됐나</td><td><code>get_board_parts *basys*</code></td><td><code>digilentinc.com:basys3:part0:1.2</code> · 빈 결과면 설치 위치가 틀린 것</td><td class="d">09-30</td></tr>
+<tr><td>Basys3 칩(부품)이 설치돼 있나</td><td><code>get_parts xc7a35tcpg236*</code></td><td><code>xc7a35tcpg236-1</code> 외 3개 · Basys3 는 <b><code>-1</code></b></td><td class="d">09-30</td></tr>
+</table></div>
+
+<h3 id="program">보드에 올리기 (Hardware Manager)</h3>
+<div class="tw"><table>
+<tr><th>순서</th><th>누를 곳 (Flow Navigator 왼쪽 아래 PROGRAM AND DEBUG)</th><th>확인할 것</th><th>처음</th></tr>
+<tr><td>① 비트스트림 만들기</td><td><b>Generate Bitstream</b></td><td>오른쪽 위에 <code>write_bitstream Complete</code> ✔</td><td class="d">09-30</td></tr>
+<tr><td>② 보드 연결</td><td><b>Open Hardware Manager → Open Target → Auto Connect</b></td><td>Hardware 창에 <code>xc7a35t_0</code> 이 보임. 안 보이면 USB 가 안 잡힌 것 → D장의 <code>VID_0403</code> 확인</td><td class="d">09-30</td></tr>
+<tr><td>③ 올리기</td><td><b>Program Device</b> → 창에서 <code>.bit</code> 경로 확인 → Program</td><td>상태가 <code>Programmed</code>, 보드의 DONE LED 켜짐</td><td class="d">09-30</td></tr>
+<tr><td>(같은 일, Tcl)</td><td><code>set_property PROGRAM.FILE {…/impl_1/gates.bit} [get_hw_devices xc7a35t_0]</code> 다음 <code>program_hw_devices [get_hw_devices xc7a35t_0]</code></td><td>GUI 로 누르면 Tcl 콘솔에 이런 명령이 찍힌다</td><td class="d">09-30</td></tr>
+</table></div>
+<div class="memo">"There are no debug cores" 초록 안내는 오류가 아니다 — 디버그용 회로(ILA)를 안 넣었다는 뜻.</div>
+
+<h3 id="boardfile">보드 파일 설치 순서 (Basys3)</h3>
+<ol class="steps">
+<li><code>C:\Xilinx\Vivado\2022.2\data\boards\</code> 안에 <b><code>board_files</code> 폴더를 새로 만든다</b> (설치 직후엔 없다)</li>
+<li>zip 을 풀기 <b>전에 zip 안을 열어 본다</b>. 안에 이미 <code>basys3\C.0\</code> 가 들어 있으면 → 탐색기 "압축 풀기" 창에서 대상 경로 끝에 자동으로 붙는 <code>\basys3</code> 를 <b>지우고</b> 푼다</li>
+<li>최종 모양 확인: <code>board_files\basys3\C.0\board.xml</code> (한 단계라도 깊으면 Vivado 가 조용히 못 찾는다)</li>
+<li><b>Vivado 를 껐다 켠다</b> (보드 파일은 시작할 때 한 번 읽는다)</li>
+<li>Tcl 콘솔에 <code>get_board_parts *basys*</code> → 결과가 나오면 성공</li>
+</ol>
+<div class="ok">보드 파일 없이도 된다: New Project 에서 <b>Parts</b> 탭에서 <code>xc7a35tcpg236-1</code> 직접 선택 + Digilent 의 <code>Basys-3-Master.xdc</code> (github.com/Digilent/digilent-xdc) 에서 쓰는 핀 줄만 <code>#</code> 지우기.</div>
+
+<h3 id="vivado-path">프로젝트 폴더 이름 규칙</h3>
+<div class="tw"><table>
+<tr><th>규칙</th><th>좋음</th><th>나쁨</th><th>근거</th></tr>
+<tr><td>영문·숫자·밑줄만</td><td><code>20260930_gates</code>, <code>w01_basys3_led</code></td><td><code>1주차 실습</code>, <code>과제_1</code></td><td>09-30 실측: 한글 폴더에서 합성 <code>synth_design ERROR</code>, 영문은 성공</td></tr>
+<tr><td>짧게</td><td><code>C:\work\26_AI_CAMP_2\...</code></td><td>폴더를 여러 겹으로 깊게</td><td>Windows 경로 260자 제한. IP 하나가 프로젝트 안에 약 66자를 더 판다(09-30 실측)</td></tr>
+</table></div>
+
+<!-- ============================================================ -->
+<h2 id="windows">D. Windows · 탐색기</h2>
+<div class="tw"><table>
+<tr><th>하고 싶은 것</th><th>방법</th><th>메모</th><th>처음</th></tr>
+<tr><td>폴더의 <b>진짜 경로</b> 보기</td><td>탐색기 주소창을 한 번 클릭</td><td>"사용자" → <code>C:\Users</code> 로 바뀌어 보인다. 프로그램은 이 진짜 이름을 쓴다</td><td class="d">09-30</td></tr>
+<tr><td>Basys3 USB 가 PC 에 잡혔는지 확인</td><td>PowerShell: <code>Get-PnpDevice -PresentOnly | ? InstanceId -match 'VID_0403'</code></td><td>Basys3 의 USB 칩은 FTDI 제품(제조사 번호 <code>VID_0403</code>). 아무것도 안 나오면 PC 가 보드를 못 본 것 → 케이블·포트 문제. 잡히면 장치 관리자에 "USB Serial Converter A/B" 와 "포트(COM &amp; LPT)" 가 생긴다</td><td class="d">09-30</td></tr>
+<tr><td>PATH 에 폴더 추가 (명령 이름만 치면 실행되게)</td><td>시작 메뉴 "<b>시스템 환경 변수 편집</b>" → 환경 변수(N)… → Path → 편집 → 새로 만들기</td><td>Vivado <code>bin</code> 을 넣어야 VS Code 린터가 <code>xvlog</code> 를 찾는다. 이 노트북은 이미 들어 있음(10-01 확인)</td><td class="d">10-01</td></tr>
+<tr><td>장치 관리자 열기</td><td><kbd>Win</kbd>+<kbd>X</kbd> → 장치 관리자</td><td>"포트(COM &amp; LPT)" 항목은 COM 장치가 하나라도 있어야 나타난다</td><td class="d">09-30</td></tr>
+<tr><td>zip 안 구조 미리 보기</td><td>zip 을 더블클릭(풀지 않고 열림)</td><td>안에 폴더가 이미 있으면 "압축 풀기" 때 폴더가 두 겹이 된다</td><td class="d">09-30</td></tr>
+</table></div>
+
+<!-- ============================================================ -->
+<h2 id="claude">E. 클로드코드</h2>
+<div class="tw"><table>
+<tr><th>하고 싶은 것</th><th>명령</th><th>메모</th><th>처음</th></tr>
+<tr><td>다른 폴더도 같이 열어서 시작</td><td><code>claude --add-dir C:\work\26_AI_CAMP_2</code></td><td><code>C:\Users\LG\Developer</code> 에서 실행. 그 폴더 파일을 열 때 권한 확인을 매번 안 물음</td><td class="d">09-30</td></tr>
+<tr><td>지난 대화 이어서</td><td><code>claude --resume</code> (목록에서 고름) 또는 <code>claude --resume 대화ID</code></td><td>대화는 <b>켠 폴더 기준</b>으로 저장된다. 다른 폴더에서 켜면 목록이 비어 보인다</td><td class="d">09-30</td></tr>
+<tr><td>지금 어떤 CLAUDE.md 가 읽혔나 보기</td><td><code>/context</code></td><td>"Memory files" 목록 확인</td><td class="d">09-30</td></tr>
+<tr><td>기억(memory) 파일 보기·끄기</td><td><code>/memory</code></td><td></td><td class="d">09-30</td></tr>
+<tr><td>대화창에서 바로 명령 실행</td><td>맨 앞에 <code>!</code> 붙이기 (예: <code>! git status</code>)</td><td>결과가 대화에 남아서 클로드가 같이 본다</td><td class="d">09-30</td></tr>
+</table></div>
+
+<!-- ============================================================ -->
+<h2 id="classroom">F. 과제 제출 (Google 클래스룸)</h2>
+<div class="tw"><table>
+<tr><th>하고 싶은 것</th><th>방법</th><th>메모</th><th>처음</th></tr>
+<tr><td>과제 파일 제출</td><td>과제 화면 오른쪽 "내 과제" → <b>+ 추가 또는 만들기</b> → <b>파일</b> → 업로드 → 파일이 붙으면 파란 버튼 <b>제출</b> → 확인 창에서 다시 <b>제출</b></td><td>상태가 "할당됨" → "<b>제출됨</b>"으로 바뀌면 끝. 출처: 클래스룸 고객센터 "과제 제출하기"(support.google.com/edu/classroom/answer/6020285)</td><td class="d">10-02</td></tr>
+<tr><td>(주의) 파일 없이 "완료로 표시"</td><td>누르지 말 것</td><td>첨부 없이도 상태가 "제출됨"이 된다 = 빈 과제 제출</td><td class="d">10-02</td></tr>
+<tr><td>잘못 낸 파일 바꾸기</td><td><b>제출 취소</b> → 확인 → 파일 바꾸고 다시 <b>제출</b></td><td>제출 취소 후에는 마감일 전에 다시 내야 한다. 마감 뒤 제출·완료 표시는 "늦게 제출"로 표시됨</td><td class="d">10-02</td></tr>
+</table></div>
+
+</div>
+
+<script>
+(function(){
+  var list = document.getElementById('sideList');
+  var links = [], curUl = null;
+  document.querySelectorAll('.wrap h2, .wrap h3').forEach(function(el, i){
+    if (!el.id) el.id = 'h' + i;
+    var li = document.createElement('li'), a = document.createElement('a');
+    a.textContent = el.textContent; a.href = '#' + el.id; li.appendChild(a);
+    if (el.tagName === 'H2') {
+      li.className = 'sec'; curUl = document.createElement('ul'); li.appendChild(curUl); list.appendChild(li);
+    } else { li.className = 'q'; (curUl || list).appendChild(li); }
+    links.push({el: el, a: a});
+  });
+
+  function spy(){
+    var y = window.scrollY + 80, cur = null;
+    for (var i = 0; i < links.length; i++) { if (links[i].el.offsetTop <= y) cur = links[i]; }
+    links.forEach(function(l){ l.a.classList.toggle('on', l === cur); });
+  }
+  window.addEventListener('scroll', spy, {passive: true}); spy();
+
+  var side = document.getElementById('side'), btn = document.getElementById('sideToggle');
+  btn.addEventListener('click', function(){
+    var closed = side.classList.toggle('closed');
+    btn.textContent = closed ? '펼치기' : '접기';
+    btn.setAttribute('aria-expanded', String(!closed));
+  });
+
+  // 검색: 표의 줄 중 검색어가 들어간 줄만 남긴다 (제목 줄은 항상 표시)
+  var q = document.getElementById('q');
+  q.addEventListener('input', function(){
+    var t = q.value.trim().toLowerCase();
+    document.querySelectorAll('.wrap table tr').forEach(function(tr){
+      if (tr.querySelector('th')) return;
+      tr.classList.toggle('hide', t !== '' && tr.textContent.toLowerCase().indexOf(t) < 0);
+    });
+  });
+})();
+</script>

@@ -1,0 +1,24 @@
+mode,mode_kr,seconds,time_share_pct,samples,avg_power_w,min_power_w,max_power_w,energy_wh,wh_per_hour
+standby,대기,4.1,20.0,5,2.185,2.091,3.252,0.002501,2.185
+active,감시,1.0,5.0,1,2.749,2.749,2.749,0.000785,2.749
+alert,경보,15.5,75.0,15,5.942,4.854,6.91,0.025547,5.942
+total,전체,20.6,100.0,21,5.032,,,0.028833,5.032
+
+#,engine,LiteRT 2.2.0
+#,threads,2
+#,standby_model,ssdlite320_mbv3_fp32.tflite
+#,active_model,v2_best.tflite
+#,standby_interval_s,5.0
+#,hold_s,3.0
+#,conf_th,0.4
+#,to_active_count,1
+#,to_standby_count,0
+#,to_alert_count,1
+#,alert_off_count,0
+#,gate,True
+#,watch_fps,10.0
+#,alert_fps,30.0
+#,cam_off_standby,False
+#,idle_w,1.91
+#,alarm_count,0
+#,run_seconds,21.5

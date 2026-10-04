@@ -1,0 +1,24 @@
+mode,mode_kr,seconds,time_share_pct,samples,avg_power_w,min_power_w,max_power_w,energy_wh,wh_per_hour
+standby,대기,0.0,100.0,1,2.332,2.332,2.332,1.6e-05,2.332
+active,감시,0.0,0.0,0,,,,0.0,
+alert,경보,0.0,0.0,0,,,,0.0,
+total,전체,0.0,100.0,1,2.332,,,1.6e-05,2.332
+
+#,engine,LiteRT 2.2.0
+#,threads,4
+#,standby_model,ssdlite320_mbv3_fp32.tflite
+#,active_model,yolo11n_fp32.tflite
+#,standby_interval_s,5.0
+#,hold_s,3.0
+#,conf_th,0.4
+#,to_active_count,0
+#,to_standby_count,0
+#,to_alert_count,0
+#,alert_off_count,0
+#,gate,True
+#,watch_fps,10.0
+#,alert_fps,0.0
+#,cam_off_standby,True
+#,idle_w,1.91
+#,alarm_count,0
+#,run_seconds,0.9

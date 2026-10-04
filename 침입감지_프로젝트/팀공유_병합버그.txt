@@ -1,0 +1,52 @@
+[merged_dataset_adult_update 병합 오류 공유]
+
+■ 현상
+성인 데이터(ad_0010 ~ ad_0058, 49장)의 사진과 라벨이 서로 다른 split 으로 갈라졌습니다.
+
+   images/train   ad_ 파일   0개   <- 사진이 하나도 없음
+   images/test    ad_ 파일  49개
+   labels/train   ad_ 파일  40개   <- 라벨은 여기로 감
+   labels/test    ad_ 파일   9개
+
+   확인 예시
+     images/train/ad_0010.jpg   없음
+     labels/train/ad_0010.txt   있음
+     images/test/ad_0010.jpg    있음
+     labels/test/ad_0010.txt    없음
+
+■ 원인
+이미지와 라벨을 각각 따로 train/test 로 나눈 것으로 보입니다.
+YOLO 는 같은 split 폴더 안에서 파일 이름으로 사진과 라벨을 짝짓기 때문에,
+둘이 다른 폴더에 있으면 짝을 못 찾습니다.
+
+■ 영향
+   - train : 라벨 40개가 짝 없는 상태로 무시됨 (학습에 안 쓰임)
+   - test  : 사진 40장이 "아무 물체도 없는 사진"으로 채점됨
+             -> 모델이 사람을 제대로 찾아도 오답 처리되어 adult 점수가 실제보다 낮게 나옴
+   - 결과적으로 49장 중 9장만 정상 사용됨
+
+■ 추가로 발견한 것
+   - data.yaml 이 없습니다. 없으면 학습이 시작되지 않습니다.
+   - 짝 없는 라벨 1개, 라벨 없는 사진 19장이 있습니다.
+
+■ 조치
+고친 버전을 merged_v3.zip 으로 올려두었습니다.
+   1) ad_ 사진 40장을 images/test -> images/train 으로 이동 (라벨 위치에 맞춤)
+   2) 짝 없는 라벨 -> _orphan 폴더로 분리
+   3) 라벨 없는 사진 -> _unlabeled 폴더로 분리
+   4) data.yaml 생성 (val: images/test)
+
+   최종
+     train  사진 621 / 라벨 621
+     test   사진 189 / 라벨 189
+     박스   baby 250 / adult 330 / knife 153 / outlet 212
+
+■ 다음부터
+train/test 로 나눌 때는 사진과 라벨을 반드시 같이 옮겨야 합니다.
+split_dataset.py 를 쓰시면 짝을 맞춰서 나눠 줍니다.
+
+   python split_dataset.py <라벨링한 폴더> <출력폴더>
+
+■ 참고 (오류 아님)
+images/train 에 있는 front-lie-near-bright_adult_00NN.jpg 는 다른 분이 찍은 성인 사진이고
+정상입니다. 문제가 된 것은 ad_ 로 시작하는 파일뿐입니다.
